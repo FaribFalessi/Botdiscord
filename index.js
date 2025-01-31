@@ -1,3 +1,4 @@
+const keep_alive = require (`./keep/alive.js`);
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const cron = require('node-cron');
 
