@@ -230,7 +230,7 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
     if (!lastMessages[tipo] || !esRecordatorio) {
         try {
             if (lastMessages[tipo]) {
-                await lastMessages[tipo].delete();
+                await lastMessages[tipo].delete(); // Borrar el mensaje anterior
                 console.log("🗑️ Mensaje anterior eliminado.");
             }
         } catch (error) {
@@ -239,6 +239,19 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
     }
 
     let embed;
+
+    // Condiciones para el tipo de evento (sin cambios)
+
+    // Enviar el mensaje
+    lastMessages[tipo] = await channel.send({
+        content: esRecordatorio
+            ? "🔔 **Recordatorio**: ¡El evento sigue activo! No olvides guardar la toma fotográfica. 📷"
+            : "📢 **Aviso para <@&1334408903034667029>**!",
+        embeds: [embed],
+    });
+    console.log("✅ Mensaje enviado.");
+}
+
 
     // Condiciones para el tipo de evento
     if (tipo === "ROBO A VEHÍCULO") {
