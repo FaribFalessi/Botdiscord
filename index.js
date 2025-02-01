@@ -175,10 +175,9 @@ client.once("ready", () => {
 
     // Simulación de la función para obtener el canal
     async function obtenerCanal() {
-        // Esta función debe devolver el canal adecuado donde enviar los mensajes
-        // Aquí está solo como ejemplo
-        return { send: async (message) => console.log(message) };
-    }
+    const channel = await client.channels.fetch(channelID);
+    return channel;
+}
 });
 
 client.on("messageCreate", async (message) => {
@@ -205,8 +204,8 @@ async function iniciarRecordatorios(hora, tipoEvento) {
         }
 
         console.log(`🕰️ Recordatorio de: ${tipoEvento}`);
-        // Simular el envío de un mensaje
-        await enviarMensaje(channelID, tipoEvento, true);
+        const channel = await obtenerCanal();  // Asegúrate de obtener el canal correctamente
+        await enviarMensaje(channel, tipoEvento, true);
         count++;
     }, hora * 3600000); // Convertir hora a milisegundos
 };
