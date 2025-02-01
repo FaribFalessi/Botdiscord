@@ -24,127 +24,163 @@ let lastMessages = {};
 client.once("ready", () => {
     console.log("✅ Bot en línea y programado.");
 
-    const eventos = [
-        { inicio: 23, duracion: 3, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
-        { inicio: 12, duracion: 3, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
-        { inicio: 15, duracion: 2, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
-        { inicio: 17, duracion: 2, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
-        {
-            inicio: 7,
-            duracion: 3,
-            tipo: "MISIÓN DE TRÁFICO ILEGAL",
-            dias: "1,4,6",
-        },
-        {
-            inicio: 15,
-            duracion: 3,
-            tipo: "MISIÓN DE TRÁFICO ILEGAL",
-            dias: "1,4,6",
-        },
-        {
-            inicio: 20,
-            duracion: 1,
-            tipo: "MISIÓN DE TRÁFICO ILEGAL",
-            dias: "1,4,6",
-        },
-        {
-            inicio: 22,
-            duracion: 12,
-            tipo: "ROBO A NEGOCIO",
-            dias: "0,1,3,5",
-        },
-        {
-            inicio: 10,
-            duracion: 11,
-            tipo: "ROBO A NEGOCIO",
-            dias: "0,1,3,5",
-        },
-        {
-            inicio: 0,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 14,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 16,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 18,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 1)",
-            dias: "1",
-        }, // Lunes, de 05:00 a 21:00
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 2)",
-            dias: "3",
-        }, // Miércoles, de 05:00 a 21:00
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 3)",
-            dias: "5",
-        }, // Viernes, de 05:00 a 21:00
-        { inicio: 5, duracion: 16, tipo: "DÍA DE RECOMPENSA", dias: "0" }, // Domingo, de 05:00 a 21:00
-        { inicio: 7, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 07:00 a 10:00
-        { inicio: 15, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 15:00 a 18:00
-        { inicio: 20, duracion: 1, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 20:00 a 21:00
-        {
-            inicio: 0,
-            duracion: 2,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 00:00 a 02:00
-        {
-            inicio: 16,
-            duracion: 2,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 16:00 a 18:00
-        {
-            inicio: 18,
-            duracion: 2,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 18:00 a 20:00
-        {
-            inicio: 20,
-            duracion: 1,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 20:00 a 21:00
-    ];
+    const moment = require('moment-timezone');
 
-    eventos.forEach((evento) => {
-        cron.schedule(
-            `0 ${evento.inicio} * * ${evento.dias}`,
-            () => {
-                iniciarRecordatorios(evento.duracion, evento.tipo);
-            },
-            {
-                timezone: "America/Argentina/Buenos_Aires",
-            },
-        );
-    });
+// Definir los eventos
+const eventos = [
+    { inicio: 23, duracion: 3, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
+    { inicio: 12, duracion: 3, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
+    { inicio: 15, duracion: 2, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
+    { inicio: 17, duracion: 2, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
+    {
+        inicio: 7,
+        duracion: 3,
+        tipo: "MISIÓN DE TRÁFICO ILEGAL",
+        dias: "1,4,6",
+    },
+    {
+        inicio: 15,
+        duracion: 3,
+        tipo: "MISIÓN DE TRÁFICO ILEGAL",
+        dias: "1,4,6",
+    },
+    {
+        inicio: 20,
+        duracion: 1,
+        tipo: "MISIÓN DE TRÁFICO ILEGAL",
+        dias: "1,4,6",
+    },
+    {
+        inicio: 22,
+        duracion: 12,
+        tipo: "ROBO A NEGOCIO",
+        dias: "0,1,3,5",
+    },
+    {
+        inicio: 10,
+        duracion: 11,
+        tipo: "ROBO A NEGOCIO",
+        dias: "0,1,3,5",
+    },
+    {
+        inicio: 0,
+        duracion: 2,
+        tipo: "LANCHA ENCALLADA",
+        dias: "0,1,2,5",
+    },
+    {
+        inicio: 14,
+        duracion: 2,
+        tipo: "LANCHA ENCALLADA",
+        dias: "0,1,2,5",
+    },
+    {
+        inicio: 16,
+        duracion: 2,
+        tipo: "LANCHA ENCALLADA",
+        dias: "0,1,2,5",
+    },
+    {
+        inicio: 18,
+        duracion: 2,
+        tipo: "LANCHA ENCALLADA",
+        dias: "0,1,2,5",
+    },
+    {
+        inicio: 5,
+        duracion: 16,
+        tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 1)",
+        dias: "1",
+    }, // Lunes, de 05:00 a 21:00
+    {
+        inicio: 5,
+        duracion: 16,
+        tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 2)",
+        dias: "3",
+    }, // Miércoles, de 05:00 a 21:00
+    {
+        inicio: 5,
+        duracion: 16,
+        tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 3)",
+        dias: "5",
+    }, // Viernes, de 05:00 a 21:00
+    { inicio: 5, duracion: 16, tipo: "DÍA DE RECOMPENSA", dias: "0" }, // Domingo, de 05:00 a 21:00
+    { inicio: 7, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 07:00 a 10:00
+    { inicio: 15, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 15:00 a 18:00
+    { inicio: 20, duracion: 1, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 20:00 a 21:00
+    {
+        inicio: 0,
+        duracion: 2,
+        tipo: "BUSQUEDA DE CONTENEDORES",
+        dias: "3,4,6,0",
+    }, // Miércoles, jueves, sábado, domingo, de 00:00 a 02:00
+    {
+        inicio: 16,
+        duracion: 2,
+        tipo: "BUSQUEDA DE CONTENEDORES",
+        dias: "3,4,6,0",
+    }, // Miércoles, jueves, sábado, domingo, de 16:00 a 18:00
+    {
+        inicio: 18,
+        duracion: 2,
+        tipo: "BUSQUEDA DE CONTENEDORES",
+        dias: "3,4,6,0",
+    }, // Miércoles, jueves, sábado, domingo, de 18:00 a 20:00
+    {
+        inicio: 20,
+        duracion: 1,
+        tipo: "BUSQUEDA DE CONTENEDORES",
+        dias: "3,4,6,0",
+    }, // Miércoles, jueves, sábado, domingo, de 20:00 a 21:00
+];
 
-    console.log("⏳ Eventos programados.");
-});
+// Función para enviar mensajes (simulación, reemplázalo con tu código real)
+async function enviarMensaje(channel, tipoEvento, esRecordatorio) {
+    const embed = {
+        title: `Recordatorio: ${tipoEvento}`,
+        description: esRecordatorio ? "Es hora de un evento." : "Este es el evento.",
+        color: esRecordatorio ? "#FF0000" : "#00FF00",
+        timestamp: new Date(),
+    };
+    
+    await channel.send({ embed });
+}
+
+// Función que verifica los eventos usando la hora de Argentina
+async function verificarEventos() {
+    const now = moment().tz('America/Argentina/Buenos_Aires'); // Hora de Argentina
+    const diaSemana = now.day(); // Día de la semana (0 es domingo, 1 es lunes, etc.)
+    const horaActual = now.hour(); // Hora actual en formato de 24 horas
+
+    for (const evento of eventos) {
+        // Verifica si el día actual está en el rango de los días del evento
+        if (evento.dias.split(",").includes(diaSemana.toString())) {
+            const horaInicio = evento.inicio; // Hora de inicio del evento
+            const horaFin = evento.inicio + evento.duracion; // Hora de fin del evento
+
+            // Si la hora actual está dentro del rango del evento
+            if (horaActual >= horaInicio && horaActual < horaFin) {
+                // Obtener canal (simulado)
+                const channel = await obtenerCanal(); // Reemplaza esta función con la lógica para obtener el canal
+
+                // Enviar recordatorio
+                const esRecordatorio = true; // Siempre será un recordatorio
+                await enviarMensaje(channel, evento.tipo, esRecordatorio);
+            }
+        }
+    }
+}
+
+// Llamamos a esta función periódicamente para verificar los eventos (cada minuto, por ejemplo)
+setInterval(verificarEventos, 60000); // 60000 ms = 1 minuto
+
+// Simulación de la función para obtener el canal
+async function obtenerCanal() {
+    // Esta función debe devolver el canal adecuado donde enviar los mensajes
+    // Aquí está solo como ejemplo
+    return { send: async (message) => console.log(message) };
+}
+
 
 client.on("messageCreate", async (message) => {
     if (message.content.toLowerCase() === "!tester robo a vehiculo") {
@@ -230,7 +266,7 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
     if (!lastMessages[tipo] || !esRecordatorio) {
         try {
             if (lastMessages[tipo]) {
-                await lastMessages[tipo].delete(); // Borrar el mensaje anterior
+                await lastMessages[tipo].delete();
                 console.log("🗑️ Mensaje anterior eliminado.");
             }
         } catch (error) {
@@ -239,19 +275,6 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
     }
 
     let embed;
-
-    // Condiciones para el tipo de evento (sin cambios)
-
-    // Enviar el mensaje
-    lastMessages[tipo] = await channel.send({
-        content: esRecordatorio
-            ? "🔔 **Recordatorio**: ¡El evento sigue activo! No olvides guardar la toma fotográfica. 📷"
-            : "📢 **Aviso para <@&1334408903034667029>**!",
-        embeds: [embed],
-    });
-    console.log("✅ Mensaje enviado.");
-}
-
 
     // Condiciones para el tipo de evento
     if (tipo === "ROBO A VEHÍCULO") {
@@ -400,6 +423,16 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
                     "https://cdn-icons-png.flaticon.com/512/7175/7175311.png",
             });
     }
+
+    // Enviar el mensaje
+    lastMessages[tipo] = await channel.send({
+        content: esRecordatorio
+            ? "🔔 **Recordatorio**: ¡El evento sigue activo! No olvides guardar la toma fotográfica. 📷"
+            : "📢 **Aviso para <@&1334408903034667029>**!",
+        embeds: [embed],
+    });
+    console.log("✅ Mensaje enviado.");
+}
 
 console.log("Token:", mySecret ? "Cargado correctamente" : "No cargado");
 client.login(mySecret);
