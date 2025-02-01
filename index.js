@@ -14,7 +14,7 @@ const client = new Client({
     ],
 });
 
-const mySecret = process.env["Token"];
+const mySecret = process.env.Token;
 const channelID = "1334412534127788043";
 
 let lastMessages = {};
@@ -390,4 +390,6 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
     console.log("✅ Mensaje enviado.");
 }
 
+console.log("Token:", mySecret ? "Cargado correctamente" : "No cargado");
 client.login(mySecret);
+
