@@ -24,7 +24,8 @@ let lastMessages = {};
 client.once("ready", () => {
     console.log("✅ Bot en línea y programado.");
 
-    const moment = require('moment-timezone');
+
+const moment = require('moment-timezone');
 
 // Definir los eventos
 const eventos = [
@@ -171,6 +172,15 @@ async function verificarEventos() {
     }
 }
 
+// Llamamos a esta función periódicamente para verificar los eventos (cada minuto, por ejemplo)
+setInterval(verificarEventos, 60000); // 60000 ms = 1 minuto
+
+// Simulación de la función para obtener el canal
+async function obtenerCanal() {
+    // Esta función debe devolver el canal adecuado donde enviar los mensajes
+    // Aquí está solo como ejemplo
+    return { send: async (message) => console.log(message) };
+}
 // Llamamos a esta función periódicamente para verificar los eventos (cada minuto, por ejemplo)
 setInterval(verificarEventos, 60000); // 60000 ms = 1 minuto
 
