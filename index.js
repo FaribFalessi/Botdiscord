@@ -91,47 +91,47 @@ client.once("ready", () => {
             duracion: 16,
             tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 1)",
             dias: "1",
-        }, // Lunes, de 05:00 a 21:00
+        },
         {
             inicio: 5,
             duracion: 16,
             tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 2)",
             dias: "3",
-        }, // Miércoles, de 05:00 a 21:00
+        },
         {
             inicio: 5,
             duracion: 16,
             tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 3)",
             dias: "5",
-        }, // Viernes, de 05:00 a 21:00
-        { inicio: 5, duracion: 16, tipo: "DÍA DE RECOMPENSA", dias: "0" }, // Domingo, de 05:00 a 21:00
-        { inicio: 7, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 07:00 a 10:00
-        { inicio: 15, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 15:00 a 18:00
-        { inicio: 20, duracion: 1, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 20:00 a 21:00
+        },
+        { inicio: 5, duracion: 16, tipo: "DÍA DE RECOMPENSA", dias: "0" },
+        { inicio: 7, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" },
+        { inicio: 15, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" },
+        { inicio: 20, duracion: 1, tipo: "REPARTO AÉREO", dias: "5" },
         {
             inicio: 0,
             duracion: 2,
             tipo: "BUSQUEDA DE CONTENEDORES",
             dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 00:00 a 02:00
+        },
         {
             inicio: 16,
             duracion: 2,
             tipo: "BUSQUEDA DE CONTENEDORES",
             dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 16:00 a 18:00
+        },
         {
             inicio: 18,
             duracion: 2,
             tipo: "BUSQUEDA DE CONTENEDORES",
             dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 18:00 a 20:00
+        },
         {
             inicio: 20,
             duracion: 1,
             tipo: "BUSQUEDA DE CONTENEDORES",
             dias: "3,4,6,0",
-        }, // Miércoles, jueves, sábado, domingo, de 20:00 a 21:00
+        },
     ];
 
     // Función para enviar mensajes (simulación, reemplázalo con tu código real)
@@ -168,16 +168,6 @@ client.once("ready", () => {
                 }
             }
         }
-    }
-
-    // Llamamos a esta función periódicamente para verificar los eventos (cada minuto, por ejemplo)
-    setInterval(verificarEventos, 60000); // 60000 ms = 1 minuto
-
-    // Simulación de la función para obtener el canal
-    async function obtenerCanal() {
-        // Esta función debe devolver el canal adecuado donde enviar los mensajes
-        // Aquí está solo como ejemplo
-        return { send: async (message) => console.log(message) };
     }
 
     // Llamamos a esta función periódicamente para verificar los eventos (cada minuto, por ejemplo)
