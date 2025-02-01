@@ -1,9 +1,9 @@
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const cron = require("node-cron");
-
 const express = require("express");
 const app = express();
 const port = 3000;
+
 app.listen(port, () => console.log("Bot encendido"));
 
 const client = new Client({
