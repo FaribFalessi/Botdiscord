@@ -209,6 +209,6 @@ async function iniciarRecordatorios(hora, tipoEvento) {
         await enviarMensaje(channelID, tipoEvento, true);
         count++;
     }, hora * 3600000); // Convertir hora a milisegundos
-});
+};
 
 client.login(mySecret);
