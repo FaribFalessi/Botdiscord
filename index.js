@@ -400,15 +400,6 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
                     "https://cdn-icons-png.flaticon.com/512/7175/7175311.png",
             });
     }
-
-    // Enviar el mensaje
-    lastMessages[tipo] = await channel.send({
-        content: esRecordatorio
-            ? "🔔 **Recordatorio**: ¡El evento sigue activo! No olvides guardar la toma fotográfica. 📷"
-            : "📢 **Aviso para <@&1334408903034667029>**!",
-        embeds: [embed],
-    });
-    console.log("✅ Mensaje enviado.");
 }
 
 console.log("Token:", mySecret ? "Cargado correctamente" : "No cargado");
