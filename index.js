@@ -400,7 +400,6 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
                     "https://cdn-icons-png.flaticon.com/512/7175/7175311.png",
             });
     }
-}
 
 console.log("Token:", mySecret ? "Cargado correctamente" : "No cargado");
 client.login(mySecret);
