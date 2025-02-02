@@ -41,18 +41,105 @@ client.once("ready", () => {
             tipo: "MISIÓN DE TRÁFICO ILEGAL",
             dias: "1,4,6",
         },
-        // ... el resto de eventos
+        {
+            inicio: 20,
+            duracion: 1,
+            tipo: "MISIÓN DE TRÁFICO ILEGAL",
+            dias: "1,4,6",
+        },
+        {
+            inicio: 22,
+            duracion: 12,
+            tipo: "ROBO A NEGOCIO",
+            dias: "0,1,3,5",
+        },
+        {
+            inicio: 10,
+            duracion: 11,
+            tipo: "ROBO A NEGOCIO",
+            dias: "0,1,3,5",
+        },
+        {
+            inicio: 0,
+            duracion: 2,
+            tipo: "LANCHA ENCALLADA",
+            dias: "0,1,2,5",
+        },
+        {
+            inicio: 14,
+            duracion: 2,
+            tipo: "LANCHA ENCALLADA",
+            dias: "0,1,2,5",
+        },
+        {
+            inicio: 16,
+            duracion: 2,
+            tipo: "LANCHA ENCALLADA",
+            dias: "0,1,2,5",
+        },
+        {
+            inicio: 18,
+            duracion: 2,
+            tipo: "LANCHA ENCALLADA",
+            dias: "0,1,2,5",
+        },
+        {
+            inicio: 5,
+            duracion: 16,
+            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 1)",
+            dias: "1",
+        }, // Lunes, de 05:00 a 21:00
+        {
+            inicio: 5,
+            duracion: 16,
+            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 2)",
+            dias: "3",
+        }, // Miércoles, de 05:00 a 21:00
+        {
+            inicio: 5,
+            duracion: 16,
+            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 3)",
+            dias: "5",
+        }, // Viernes, de 05:00 a 21:00
+        { inicio: 5, duracion: 16, tipo: "DÍA DE RECOMPENSA", dias: "0" }, // Domingo, de 05:00 a 21:00
+        { inicio: 7, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 07:00 a 10:00
+        { inicio: 15, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 15:00 a 18:00
+        { inicio: 20, duracion: 1, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 20:00 a 21:00
+        {
+            inicio: 0,
+            duracion: 2,
+            tipo: "BUSQUEDA DE CONTENEDORES",
+            dias: "3,4,6,0",
+        }, // Miércoles, jueves, sábado, domingo, de 00:00 a 02:00
+        {
+            inicio: 16,
+            duracion: 2,
+            tipo: "BUSQUEDA DE CONTENEDORES",
+            dias: "3,4,6,0",
+        }, // Miércoles, jueves, sábado, domingo, de 16:00 a 18:00
+        {
+            inicio: 18,
+            duracion: 2,
+            tipo: "BUSQUEDA DE CONTENEDORES",
+            dias: "3,4,6,0",
+        }, // Miércoles, jueves, sábado, domingo, de 18:00 a 20:00
+        {
+            inicio: 20,
+            duracion: 1,
+            tipo: "BUSQUEDA DE CONTENEDORES",
+            dias: "3,4,6,0",
+        }, // Miércoles, jueves, sábado, domingo, de 20:00 a 21:00
     ];
 
     eventos.forEach((evento) => {
         cron.schedule(
-            `0 ${evento.inicio} * * ${evento.dias},`
-            const func = () => {
+            `0 ${evento.inicio} * * ${evento.dias}`,
+            () => {
                 iniciarRecordatorios(evento.duracion, evento.tipo);
             },
             {
                 timezone: "America/Argentina/Buenos_Aires",
-            },
+            }
         );
     });
 
@@ -74,7 +161,7 @@ async function iniciarRecordatorios(duracionHoras, tipo) {
         return;
     }
 
-    console.log(🚀 Evento iniciado: ${tipo}. Enviando primer aviso...);
+    console.log(`🚀 Evento iniciado: ${tipo}. Enviando primer aviso...`);
     await enviarMensaje(channel, tipo);
 
     let horasTranscurridas = 0;
@@ -85,7 +172,7 @@ async function iniciarRecordatorios(duracionHoras, tipo) {
             await enviarMensaje(channel, tipo, true);
         } else {
             clearInterval(intervalo);
-            console.log(✅ Fin del evento: ${tipo}.);
+            console.log(`✅ Fin del evento: ${tipo}.`);
         }
     }, 3600000); // Cada hora
 }
@@ -108,7 +195,7 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
 
     let embed;
     // Aquí, cada tipo de evento genera un embed diferente.
-        if (tipo === "ROBO A VEHÍCULO") {
+    if (tipo === "ROBO A VEHÍCULO") {
         embed = new EmbedBuilder()
             .setTitle("🚨 ROBO A VEHÍCULO 🚨")
             .setDescription(
@@ -254,7 +341,6 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
                     "https://cdn-icons-png.flaticon.com/512/7175/7175311.png",
             });
     }
-    // Agregar más tipos de eventos según sea necesario
 
     // Enviar el mensaje
     try {
