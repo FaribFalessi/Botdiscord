@@ -47,7 +47,7 @@ client.once("ready", () => {
     eventos.forEach((evento) => {
         cron.schedule(
             `0 ${evento.inicio} * * ${evento.dias},`
-            () => {
+            const func = () => {
                 iniciarRecordatorios(evento.duracion, evento.tipo);
             },
             {
