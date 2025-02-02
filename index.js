@@ -1,9 +1,9 @@
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const cron = require("node-cron");
+
 const express = require("express");
 const app = express();
 const port = 3000;
-
 app.listen(port, () => console.log("Bot encendido"));
 
 const client = new Client({
@@ -17,16 +17,13 @@ const client = new Client({
 require("dotenv").config();
 const mySecret = process.env.TOKEN;
 
-const channelID = "1334412534127788043";
+const channelID = "1334412534127788043"; // ID del canal donde se enviarán los mensajes
 
-let lastMessages = {};
+let lastMessages = {}; // Guarda los mensajes enviados por evento
 
 client.once("ready", () => {
     console.log("✅ Bot en línea y programado.");
 
-    const moment = require("moment-timezone");
-
-    // Definir los eventos
     const eventos = [
         { inicio: 23, duracion: 3, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
         { inicio: 12, duracion: 3, tipo: "ROBO A VEHÍCULO", dias: "2,3" },
@@ -44,140 +41,22 @@ client.once("ready", () => {
             tipo: "MISIÓN DE TRÁFICO ILEGAL",
             dias: "1,4,6",
         },
-        {
-            inicio: 20,
-            duracion: 1,
-            tipo: "MISIÓN DE TRÁFICO ILEGAL",
-            dias: "1,4,6",
-        },
-        {
-            inicio: 22,
-            duracion: 12,
-            tipo: "ROBO A NEGOCIO",
-            dias: "0,1,3,5",
-        },
-        {
-            inicio: 10,
-            duracion: 11,
-            tipo: "ROBO A NEGOCIO",
-            dias: "0,1,3,5",
-        },
-        {
-            inicio: 0,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 14,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 16,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 18,
-            duracion: 2,
-            tipo: "LANCHA ENCALLADA",
-            dias: "0,1,2,5",
-        },
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 1)",
-            dias: "1",
-        },
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 2)",
-            dias: "3",
-        },
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 3)",
-            dias: "5",
-        },
-        { inicio: 5, duracion: 16, tipo: "DÍA DE RECOMPENSA", dias: "0" },
-        { inicio: 7, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" },
-        { inicio: 15, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" },
-        { inicio: 20, duracion: 1, tipo: "REPARTO AÉREO", dias: "5" },
-        {
-            inicio: 0,
-            duracion: 2,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        },
-        {
-            inicio: 16,
-            duracion: 2,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        },
-        {
-            inicio: 18,
-            duracion: 2,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        },
-        {
-            inicio: 20,
-            duracion: 1,
-            tipo: "BUSQUEDA DE CONTENEDORES",
-            dias: "3,4,6,0",
-        },
+        // ... el resto de eventos
     ];
 
-    // Función para enviar mensajes (simulación, reemplázalo con tu código real)
-    async function enviarMensaje(channel, tipoEvento, esRecordatorio) {
-        const embed = new EmbedBuilder()
-            .setTitle(`Recordatorio: ${tipoEvento}`)
-            .setDescription(esRecordatorio ? "Es hora de un evento." : "Este es el evento.")
-            .setColor(esRecordatorio ? "#FF0000" : "#00FF00")
-            .setTimestamp(new Date());
+    eventos.forEach((evento) => {
+        cron.schedule(
+            `0 ${evento.inicio} * * ${evento.dias}`,
+            () => {
+                iniciarRecordatorios(evento.duracion, evento.tipo);
+            },
+            {
+                timezone: "America/Argentina/Buenos_Aires",
+            },
+        );
+    });
 
-        await channel.send({ embeds: [embed] });
-    }
-
-    // Función que verifica los eventos usando la hora de Argentina
-    async function verificarEventos() {
-        const now = moment().tz("America/Argentina/Buenos_Aires"); // Hora de Argentina
-        const diaSemana = now.day(); // Día de la semana (0 es domingo, 1 es lunes, etc.)
-        const horaActual = now.hour(); // Hora actual en formato de 24 horas
-
-        for (const evento of eventos) {
-            // Verifica si el día actual está en el rango de los días del evento
-            if (evento.dias.split(",").includes(diaSemana.toString())) {
-                const horaInicio = evento.inicio; // Hora de inicio del evento
-                const horaFin = evento.inicio + evento.duracion; // Hora de fin del evento
-
-                // Si la hora actual está dentro del rango del evento
-                if (horaActual >= horaInicio && horaActual < horaFin) {
-                    // Obtener canal (simulado)
-                    const channel = await obtenerCanal(); // Reemplaza esta función con la lógica para obtener el canal
-
-                    // Enviar recordatorio
-                    const esRecordatorio = true; // Siempre será un recordatorio
-                    await enviarMensaje(channel, evento.tipo, esRecordatorio);
-                }
-            }
-        }
-    }
-
-    // Llamamos a esta función periódicamente para verificar los eventos (cada minuto, por ejemplo)
-    setInterval(verificarEventos, 60000); // 60000 ms = 1 minuto
-
-    // Simulación de la función para obtener el canal
-    async function obtenerCanal() {
-    const channel = await client.channels.fetch(channelID);
-    return channel;
-}
+    console.log("⏳ Eventos programados.");
 });
 
 client.on("messageCreate", async (message) => {
@@ -185,29 +64,97 @@ client.on("messageCreate", async (message) => {
         console.log('🛠️ Probando evento "ROBO A VEHÍCULO"...');
         await iniciarRecordatorios(3, "ROBO A VEHÍCULO");
     }
-    if (message.content.toLowerCase() === "!tester mision de trafico ilegal") {
-        console.log('🛠️ Probando evento "MISIÓN DE TRÁFICO ILEGAL"...');
-        await iniciarRecordatorios(3, "MISIÓN DE TRÁFICO ILEGAL");
-    }
-    if (message.content.toLowerCase() === "!tester robo a negocio") {
-        console.log('🛠️ Probando evento "ROBO A NEGOCIO"...');
-        await iniciarRecordatorios(12, "ROBO A NEGOCIO");
-    }
+    // Aquí otros comandos para probar eventos...
 });
 
-async function iniciarRecordatorios(hora, tipoEvento) {
-    let count = 0;
-    let interval = setInterval(async () => {
-        if (count === 4) {
-            clearInterval(interval);
-            return;
+async function iniciarRecordatorios(duracionHoras, tipo) {
+    const channel = await client.channels.fetch(channelID);
+    if (!channel) {
+        console.error("❌ Canal no encontrado.");
+        return;
+    }
+
+    console.log(`🚀 Evento iniciado: ${tipo}. Enviando primer aviso...`);
+    await enviarMensaje(channel, tipo);
+
+    let horasTranscurridas = 0;
+    const intervalo = setInterval(async () => {
+        horasTranscurridas++;
+        if (horasTranscurridas < duracionHoras) {
+            console.log("🔔 Enviando recordatorio...");
+            await enviarMensaje(channel, tipo, true);
+        } else {
+            clearInterval(intervalo);
+            console.log(`✅ Fin del evento: ${tipo}.`);
         }
+    }, 3600000); // Cada hora
+}
 
-        console.log(`🕰️ Recordatorio de: ${tipoEvento}`);
-        const channel = await obtenerCanal();  // Asegúrate de obtener el canal correctamente
-        await enviarMensaje(channel, tipoEvento, true);
-        count++;
-    }, hora * 3600000); // Convertir hora a milisegundos
-};
+async function enviarMensaje(channel, tipo, esRecordatorio = false) {
+    // Intentamos eliminar el mensaje anterior solo si es un recordatorio
+    if (!lastMessages[tipo] || !esRecordatorio) {
+        try {
+            if (lastMessages[tipo]) {
+                const mensajeAnterior = await channel.messages.fetch(lastMessages[tipo]);
+                if (mensajeAnterior) {
+                    await mensajeAnterior.delete();
+                    console.log("🗑️ Mensaje anterior eliminado.");
+                }
+            }
+        } catch (error) {
+            console.error("⚠️ No se pudo eliminar el mensaje anterior:", error);
+        }
+    }
 
+    let embed;
+    // Aquí, cada tipo de evento genera un embed diferente.
+    if (tipo === "ROBO A VEHÍCULO") {
+        embed = new EmbedBuilder()
+            .setTitle("🚨 ROBO A VEHÍCULO 🚨")
+            .setDescription(
+                "*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un robo a vehículo está en marcha. ¡Corre a hacerla antes de que sea tarde!"
+            )
+            .addFields({
+                name: "🛠️ Requisitos",
+                value: "*- Destornillador*",
+                inline: true,
+            })
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/5gsm8Rv.png")
+            .setFooter({
+                text: "🔻 Atentamente Al Qaeda 🔻",
+                iconURL:
+                    "https://cdn-icons-png.flaticon.com/512/7175/7175311.png",
+            });
+    } else if (tipo === "MISIÓN DE TRÁFICO ILEGAL") {
+        embed = new EmbedBuilder()
+            .setTitle("🚛 MISIÓN DE TRÁFICO ILEGAL 🚛")
+            .setDescription(
+                "*🔴 CONTRABANDO EN CURSO*\n\n 📦 Se está llevando a cabo una misión de tráfico ilegal. ¡Asegúrate de aprovechar la oportunidad!"
+            )
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/ehjnbBA.png")
+            .setFooter({
+                text: "🔻 Atentamente Al Qaeda 🔻",
+                iconURL:
+                    "https://cdn-icons-png.flaticon.com/512/7175/7175311.png",
+            });
+    }
+    // Agregar más tipos de eventos según sea necesario
+
+    // Enviar el mensaje
+    try {
+        lastMessages[tipo] = await channel.send({
+            content: esRecordatorio
+                ? "🔔 *Recordatorio*: ¡El evento sigue activo! No olvides guardar la toma fotográfica. 📷"
+                : "📢 *Aviso para <@&1334408903034667029>*!",
+            embeds: [embed],
+        });
+        console.log("✅ Mensaje enviado.");
+    } catch (error) {
+        console.error("⚠️ No se pudo enviar el mensaje:", error);
+    }
+}
+
+console.log("Token:", mySecret ? "Cargado correctamente" : "No cargado");
 client.login(mySecret);
