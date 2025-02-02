@@ -178,21 +178,19 @@ async function iniciarRecordatorios(duracionHoras, tipo) {
 }
 
 async function enviarMensaje(channel, tipo, esRecordatorio = false) {
-    // Intentamos eliminar el mensaje anterior solo si es un recordatorio
-    if (!lastMessages[tipo] || !esRecordatorio) {
-        try {
-            if (lastMessages[tipo]) {
-                const mensajeAnterior = await channel.messages.fetch(lastMessages[tipo]);
-                if (mensajeAnterior) {
-                    await mensajeAnterior.delete();
-                    console.log("🗑️ Mensaje anterior eliminado.");
-                }
+    try {
+        // Si es un recordatorio y hay un mensaje anterior, intenta eliminarlo
+        if (esRecordatorio && lastMessages[tipo]) {
+            const mensajeAnterior = await channel.messages.fetch(lastMessages[tipo]);
+            if (mensajeAnterior) {
+                await mensajeAnterior.delete();
+                console.log("🗑️ Mensaje anterior eliminado.");
             }
-        } catch (error) {
-            console.error("⚠️ No se pudo eliminar el mensaje anterior:", error);
         }
+    } catch (error) {
+        console.error("⚠️ No se pudo eliminar el mensaje anterior:", error);
     }
-
+  
     let embed;
     // Aquí, cada tipo de evento genera un embed diferente.
     if (tipo === "ROBO A VEHÍCULO") {
