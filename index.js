@@ -345,7 +345,7 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
     try {
         lastMessages[tipo] = await channel.send({
             content: esRecordatorio
-                ? "🔔 Recordatorio: ¡El evento sigue activo! No olvides guardar la toma fotográfica. 📷"
+                ? "🔔 Recordatorio: ¡El evento sigue activo!"
                 : "📢 Aviso para <@&1334408903034667029>!",
             embeds: [embed],
         });
