@@ -84,27 +84,23 @@ client.once("ready", () => {
             dias: "0,1,2,5",
         },
         {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 1)",
-            dias: "1",
-        }, // Lunes, de 05:00 a 21:00
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 2)",
-            dias: "3",
-        }, // Miércoles, de 05:00 a 21:00
-        {
-            inicio: 5,
-            duracion: 16,
-            tipo: "ELABORACIÓN DE METANFETAMINA (DÍA 3)",
+            inicio: 7,
+            duracion: 3,
+            tipo: "REPARTO AÉREO",
             dias: "5",
-        }, // Viernes, de 05:00 a 21:00
-        { inicio: 5, duracion: 16, tipo: "DÍA DE RECOMPENSA", dias: "0" }, // Domingo, de 05:00 a 21:00
-        { inicio: 7, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 07:00 a 10:00
-        { inicio: 15, duracion: 3, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 15:00 a 18:00
-        { inicio: 20, duracion: 1, tipo: "REPARTO AÉREO", dias: "5" }, // Viernes, 20:00 a 21:00
+        }, // Viernes, 07:00 a 10:00
+        {
+            inicio: 15,
+            duracion: 3,
+            tipo: "REPARTO AÉREO",
+            dias: "5",
+        }, // Viernes, 15:00 a 18:00
+        {
+            inicio: 20,
+            duracion: 1,
+            tipo: "REPARTO AÉREO",
+            dias: "5",
+        }, // Viernes, 20:00 a 21:00
         {
             inicio: 0,
             duracion: 2,
@@ -131,7 +127,11 @@ client.once("ready", () => {
         }, // Miércoles, jueves, sábado, domingo, de 20:00 a 21:00
     ];
 
-    eventos.forEach((evento) => {
+    // Aquí solo se programan los eventos que deseas, haciendo la validación
+    eventos.filter(evento => 
+        ["ROBO A VEHÍCULO", "ROBO A NEGOCIO", "LANCHA ENCALLADA", "REPARTO AÉREO", "BUSQUEDA DE CONTENEDORES"]
+        .includes(evento.tipo)
+    ).forEach((evento) => {
         cron.schedule(
             `0 ${evento.inicio} * * ${evento.dias}`,
             () => {
@@ -145,6 +145,7 @@ client.once("ready", () => {
 
     console.log("⏳ Eventos programados.");
 });
+
 
 client.on("messageCreate", async (message) => {
     if (message.content.toLowerCase() === "!tester robo a vehiculo") {
