@@ -354,17 +354,32 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
             content: "🔔 Reacciona con ✅ cuando se haya completado la misión.",
         });
         await mensaje.react("✅");
-        
+
         console.log("✅ Mensaje enviado.");
+
+        // Definir el filtro
+        const filter = (reaction, user) => {
+            return reaction.emoji.name === '✅' && !user.bot; // Evita que el bot reaccione
+        };
+
+        // Crear el collector
         const collector = mensaje.createReactionCollector({ filter, max: 1, time: 60000 });
 
+        // Cuando se recoge una reacción
         collector.on('collect', async (reaction, user) => {
             console.log(`${user.tag} marcó la misión como completada.`);
-            await mensaje.delete(); // Borra el embed después de la reacción
+            await mensaje.delete(); // Borra el embed de reacción
             const msg = await channel.messages.fetch(lastMessages[tipo]);
             await msg.delete(); // Borra el mensaje principal
         });
-        
+
+        // Cuando se termina el collector (ya sea por tiempo o por reacción)
+        collector.on('end', (collected, reason) => {
+            if (reason === 'time') {
+                console.log('⏱️ Tiempo agotado para reaccionar.');
+            }
+        });
+
     } catch (error) {
         console.error("⚠️ No se pudo enviar el mensaje:", error);
     }
