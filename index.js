@@ -11,6 +11,7 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.MessageReactions,
     ],
 });
 
@@ -349,7 +350,21 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
                 : "📢 Aviso para <@&1334408903034667029>!",
             embeds: [embed],
         });
+        const mensaje = await channel.send({
+            content: "🔔 Reacciona con ✅ cuando se haya completado la misión.",
+        });
+        await mensaje.react("✅");
+        
         console.log("✅ Mensaje enviado.");
+        const collector = mensaje.createReactionCollector({ filter, max: 1, time: 60000 });
+
+        collector.on('collect', async (reaction, user) => {
+            console.log(`${user.tag} marcó la misión como completada.`);
+            await mensaje.delete(); // Borra el embed después de la reacción
+            const msg = await channel.messages.fetch(lastMessages[tipo]);
+            await msg.delete(); // Borra el mensaje principal
+        });
+        
     } catch (error) {
         console.error("⚠️ No se pudo enviar el mensaje:", error);
     }
