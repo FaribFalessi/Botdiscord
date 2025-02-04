@@ -48,20 +48,33 @@ client.once('ready', async () => {
 });
 
 
+let isProcessing = false; // Variable para controlar si el bot está procesando un comando
+
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
     if (interaction.commandName === 'testearevento') {
+        if (isProcessing) {
+            await interaction.reply({ content: '⚠️ El comando ya está siendo procesado.', ephemeral: true });
+            return;
+        }
+
+        isProcessing = true; // Establece que el bot está procesando el comando
+
         const eventoNombre = interaction.options.getString('evento');
         const evento = eventos.find(e => e.nombre.toLowerCase() === eventoNombre.toLowerCase());
 
         if (!evento) {
             await interaction.reply({ content: '❌ Evento no encontrado.', ephemeral: true });
+            isProcessing = false; // Finaliza el procesamiento
             return;
         }
 
         const canal = await client.channels.fetch(channelId);
-        if (!canal) return;
+        if (!canal) {
+            isProcessing = false; // Finaliza el procesamiento si el canal no existe
+            return;
+        }
 
         await canal.send(`📣 El evento **${evento.nombre}** ha comenzado <@&${roleId}>`);
 
@@ -110,10 +123,10 @@ client.on('interactionCreate', async interaction => {
         // Confirmación del evento
         await interaction.reply({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, ephemeral: true });
 
-        // Evitar que otros eventos se envíen
-        return;  // Añadir esto para asegurar que solo se envíe el evento seleccionado
+        isProcessing = false; // Finaliza el procesamiento
     }
 });
+
 
 client.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
