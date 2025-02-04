@@ -10,7 +10,6 @@ app.listen(port, () => console.log("Bot encendido"));
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions] });
 
-
 const mySecret = process.env.TOKEN;
 const channelId = '1334412534127788043'; // Reemplázalo con el ID del canal donde quieres que se envíen los eventos
 const roleId = '1334408903034667029'; // Reemplázalo con el ID del rol a mencionar en los recordatorios
@@ -57,6 +56,8 @@ client.on('interactionCreate', async interaction => {
         const canal = await client.channels.fetch(channelId);
         if (!canal) return;
 
+        await canal.send(`📣 El evento **${evento.nombre}** ha comenzado <@&${roleId}>`);
+
         const embed = new EmbedBuilder()
             .setTitle(`🚨 ${evento.nombre} 🚨`)
             .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un evento está en marcha. ¡Corre a hacerla antes de que sea tarde!`)
@@ -82,6 +83,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 });
 
 client.login(mySecret);
+
 
 
 
