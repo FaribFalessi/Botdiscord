@@ -131,7 +131,7 @@ client.on('interactionCreate', async interaction => {
         eventosActivos.set(mensaje.id, { evento, mensaje });
 
         // Confirmación del evento
-        await interaction.reply({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, flags: 64 });
 
         isProcessing = false; // Finaliza el procesamiento
     }
