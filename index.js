@@ -62,7 +62,7 @@ let isProcessing = false; // Variable para controlar si el bot está procesando 
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
-    
+
     if (interaction.commandName === 'testearevento') {
         const eventoNombre = interaction.options.getString('evento');
         const evento = eventos.find(e => e.nombre.toLowerCase() === eventoNombre.toLowerCase());
@@ -71,9 +71,6 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply({ content: '❌ Evento no encontrado.', flags: 64 });
             return;
         }
-
-        // Deferir la respuesta (indicar que se está procesando)
-        await interaction.deferReply({ flags: 64 });
 
         const canal = await client.channels.fetch(channelId);
         if (!canal) return;
@@ -86,7 +83,6 @@ client.on('interactionCreate', async interaction => {
                 embed = new EmbedBuilder()
                     .setTitle(`🚨 ROBO A VEHÍCULO 🚨`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un vehículo está siendo robado. ¡Únete a la acción antes de que sea tarde!`)
-                    .addFields({ name: "🛠️ Requisitos", value: "*- Destornillador*", inline: true })
                     .setColor(0xff0000)
                     .setThumbnail("https://i.imgur.com/5gsm8Rv.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
@@ -95,7 +91,6 @@ client.on('interactionCreate', async interaction => {
                 embed = new EmbedBuilder()
                     .setTitle(`🚛 MISIÓN DE TRÁFICO ILEGAL 🚛`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚛 Un nuevo cargamento ilegal debe ser transportado. ¡Ten cuidado con la policía!`)
-                    .addFields({ name: "🛠️ Requisitos", value: "*- Camión de carga*", inline: true })
                     .setColor(0xff8c00)
                     .setThumbnail("https://i.imgur.com/3Z5ZfmN.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
@@ -104,7 +99,6 @@ client.on('interactionCreate', async interaction => {
                 embed = new EmbedBuilder()
                     .setTitle(`🏪 ROBO A NEGOCIO 🏪`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏪 Se está ejecutando un robo a un comercio. ¡Corre antes de que llegue la policía!`)
-                    .addFields({ name: "🛠️ Requisitos", value: "*- Pasamontañas y pistola*", inline: true })
                     .setColor(0xff4500)
                     .setThumbnail("https://i.imgur.com/qYOI6Rb.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
@@ -117,11 +111,15 @@ client.on('interactionCreate', async interaction => {
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
         }
 
+        // Solo se hace deferReply si la respuesta va a tomar más tiempo.
+        if (!interaction.replied) {
+            await interaction.deferReply({ flags: 64 }); // Para notificar que el bot está procesando
+        }
+
         const mensaje = await canal.send({ embeds: [embed] });
         await mensaje.react('✅');
         eventosActivos.set(mensaje.id, { evento, mensaje });
 
-        // Enviar la respuesta final con followUp
         await interaction.followUp({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, flags: 64 });
     }
 });
