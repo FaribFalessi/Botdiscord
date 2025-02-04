@@ -24,26 +24,37 @@ const eventos = [
 const eventosActivos = new Map();
 
 client.once('ready', async () => {
-    // Borrar todos los comandos para evitar duplicados
-    const commands = await guild.commands.fetch();
-    for (const cmd of commands.values()) {
-        await cmd.delete();
-    }
-    console.log('⚠️ Comandos eliminados.');
+    try {
+        const guild = client.guilds.cache.get('1036393864497475674'); // Reemplaza con el ID de tu servidor
 
-    // Luego vuelve a registrar el comando
-    await guild.commands.create(
-        new SlashCommandBuilder()
-            .setName('testearevento')
-            .setDescription('Envía un evento de prueba')
-            .addStringOption(option => 
-                option.setName('evento')
-                    .setDescription('Nombre del evento a probar')
-                    .setRequired(true)
-            )
-    );
-    console.log('✅ Comando registrado nuevamente.');
+        if (!guild) {
+            console.log('❌ No se pudo encontrar la guild con ese ID');
+            return;
+        }
+
+        // Verifica si el comando ya está registrado
+        const commands = await guild.commands.fetch();
+        if (!commands.some(cmd => cmd.name === 'testearevento')) {
+            // Registra el comando solo en este servidor específico
+            await guild.commands.create(
+                new SlashCommandBuilder()
+                    .setName('testearevento')
+                    .setDescription('Envía un evento de prueba')
+                    .addStringOption(option => 
+                        option.setName('evento')
+                            .setDescription('Nombre del evento a probar')
+                            .setRequired(true)
+                    )
+            );
+            console.log('✅ Comando registrado en el servidor.');
+        } else {
+            console.log('⚠️ El comando "testearevento" ya está registrado.');
+        }
+    } catch (error) {
+        console.error('❌ Error al intentar registrar el comando:', error);
+    }
 });
+
 
 
 
