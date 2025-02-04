@@ -73,7 +73,7 @@ client.on('interactionCreate', async interaction => {
         }
 
         // Deferir la respuesta (indicar que se está procesando)
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: 64 });
 
         const canal = await client.channels.fetch(channelId);
         if (!canal) return;
