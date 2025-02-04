@@ -24,21 +24,29 @@ const eventos = [
 const eventosActivos = new Map();
 
 client.once('ready', async () => {
-
     const guild = await client.guilds.fetch('1036393864497475674'); // Reemplaza con el ID de tu servidor
-    await guild.commands.create(
-        new SlashCommandBuilder()
-            .setName('testearevento')
-            .setDescription('Envía un evento de prueba')
-            .addStringOption(option => 
-                option.setName('evento')
-                    .setDescription('Nombre del evento a probar')
-                    .setRequired(true)
-            )
-    );
+    
+    // Obtén los comandos del servidor
+    const commands = await guild.commands.fetch();
 
-    console.log('✅ Comando registrado en el servidor.');
+    // Verifica si el comando ya existe
+    if (!commands.some(cmd => cmd.name === 'testearevento')) {
+        await guild.commands.create(
+            new SlashCommandBuilder()
+                .setName('testearevento')
+                .setDescription('Envía un evento de prueba')
+                .addStringOption(option => 
+                    option.setName('evento')
+                        .setDescription('Nombre del evento a probar')
+                        .setRequired(true)
+                )
+        );
+        console.log('✅ Comando registrado en el servidor.');
+    } else {
+        console.log('⚠️ El comando "testearevento" ya está registrado.');
+    }
 });
+
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
