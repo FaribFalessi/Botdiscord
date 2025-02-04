@@ -1,6 +1,6 @@
-
 const { Client, GatewayIntentBits, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const cron = require('node-cron');
+const moment = require('moment-timezone');
 require('dotenv').config();
 
 const express = require("express");
@@ -24,7 +24,6 @@ const eventos = [
 const eventosActivos = new Map();
 
 client.once('ready', async () => {
-    console.log(`Bot conectado como ${client.user.tag}`);
 
     const guild = await client.guilds.fetch('1036393864497475674'); // Reemplaza con el ID de tu servidor
     await guild.commands.create(
@@ -58,13 +57,42 @@ client.on('interactionCreate', async interaction => {
 
         await canal.send(`📣 El evento **${evento.nombre}** ha comenzado <@&${roleId}>`);
 
-        const embed = new EmbedBuilder()
-            .setTitle(`🚨 ${evento.nombre} 🚨`)
-            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un evento está en marcha. ¡Corre a hacerla antes de que sea tarde!`)
-            .addFields({ name: "🛠️ Requisitos", value: "*- Destornillador*", inline: true })
-            .setColor(0xff0000)
-            .setThumbnail("https://i.imgur.com/5gsm8Rv.png")
-            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻", iconURL: "https://cdn-icons-png.flaticon.com/512/7175/7175311.png" });
+        let embed;
+        switch (evento.nombre) {
+            case 'ROBO A VEHÍCULO':
+                embed = new EmbedBuilder()
+                    .setTitle(`🚨 ROBO A VEHÍCULO 🚨`)
+                    .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un vehículo está siendo robado. ¡Únete a la acción antes de que sea tarde!`)
+                    .addFields({ name: "🛠️ Requisitos", value: "*- Destornillador*", inline: true })
+                    .setColor(0xff0000)
+                    .setThumbnail("https://i.imgur.com/5gsm8Rv.png")
+                    .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+                break;
+            case 'MISIÓN DE TRÁFICO ILEGAL':
+                embed = new EmbedBuilder()
+                    .setTitle(`🚛 MISIÓN DE TRÁFICO ILEGAL 🚛`)
+                    .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚛 Un nuevo cargamento ilegal debe ser transportado. ¡Ten cuidado con la policía!`)
+                    .addFields({ name: "🛠️ Requisitos", value: "*- Camión de carga*", inline: true })
+                    .setColor(0xff8c00)
+                    .setThumbnail("https://i.imgur.com/3Z5ZfmN.png")
+                    .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+                break;
+            case 'ROBO A NEGOCIO':
+                embed = new EmbedBuilder()
+                    .setTitle(`🏪 ROBO A NEGOCIO 🏪`)
+                    .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏪 Se está ejecutando un robo a un comercio. ¡Corre antes de que llegue la policía!`)
+                    .addFields({ name: "🛠️ Requisitos", value: "*- Pasamontañas y pistola*", inline: true })
+                    .setColor(0xff4500)
+                    .setThumbnail("https://i.imgur.com/qYOI6Rb.png")
+                    .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+                break;
+            default:
+                embed = new EmbedBuilder()
+                    .setTitle(`❓ ${evento.nombre} ❓`)
+                    .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n ❓ Un evento misterioso ha comenzado. ¡Descúbrelo tú mismo!`)
+                    .setColor(0x00ff00)
+                    .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        }
 
         const mensaje = await canal.send({ embeds: [embed] });
         await mensaje.react('✅');
@@ -80,6 +108,14 @@ client.on('messageReactionAdd', async (reaction, user) => {
         await reaction.message.delete().catch(() => {});
         eventosActivos.delete(reaction.message.id);
     }
+});
+
+function convertirHorarioArgentina(horario) {
+    return moment.tz(horario, 'HH:mm', 'America/Argentina/Buenos_Aires').format('HH:mm');
+}
+
+eventos.forEach(evento => {
+    evento.horarios = evento.horarios.map(horario => convertirHorarioArgentina(horario));
 });
 
 client.login(mySecret);
