@@ -24,28 +24,27 @@ const eventos = [
 const eventosActivos = new Map();
 
 client.once('ready', async () => {
-    const guild = await client.guilds.fetch('1036393864497475674'); // Reemplaza con el ID de tu servidor
-    
-    // Obtén los comandos del servidor
+    // Borrar todos los comandos para evitar duplicados
     const commands = await guild.commands.fetch();
-
-    // Verifica si el comando ya existe
-    if (!commands.some(cmd => cmd.name === 'testearevento')) {
-        await guild.commands.create(
-            new SlashCommandBuilder()
-                .setName('testearevento')
-                .setDescription('Envía un evento de prueba')
-                .addStringOption(option => 
-                    option.setName('evento')
-                        .setDescription('Nombre del evento a probar')
-                        .setRequired(true)
-                )
-        );
-        console.log('✅ Comando registrado en el servidor.');
-    } else {
-        console.log('⚠️ El comando "testearevento" ya está registrado.');
+    for (const cmd of commands.values()) {
+        await cmd.delete();
     }
+    console.log('⚠️ Comandos eliminados.');
+
+    // Luego vuelve a registrar el comando
+    await guild.commands.create(
+        new SlashCommandBuilder()
+            .setName('testearevento')
+            .setDescription('Envía un evento de prueba')
+            .addStringOption(option => 
+                option.setName('evento')
+                    .setDescription('Nombre del evento a probar')
+                    .setRequired(true)
+            )
+    );
+    console.log('✅ Comando registrado nuevamente.');
 });
+
 
 
 let isProcessing = false; // Variable para controlar si el bot está procesando un comando
