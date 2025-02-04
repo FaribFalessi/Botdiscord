@@ -1,4 +1,109 @@
-const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
+
+const { Client, GatewayIntentBits, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const cron = require('node-cron');
+require('dotenv').config();
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions] });
+
+
+const mySecret = process.env.TOKEN;
+const channelId = '1334412534127788043'; // Reemplázalo con el ID del canal donde quieres que se envíen los eventos
+const roleId = '1334408903034667029'; // Reemplázalo con el ID del rol a mencionar en los recordatorios
+
+const eventos = [
+    { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['23:00', '12:00', '15:00', '17:00'], duracion: 3, recordatorio: true },
+    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['07:00', '15:00', '20:00'], duracion: 3, recordatorio: true },
+    { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['22:00', '10:00'], duracion: 12, recordatorio: true },
+    { nombre: 'EVENTO PERSONALIZABLE', dias: [0, 2, 4], horarios: ['18:00'], duracion: 4, recordatorio: false },
+];
+
+const eventosActivos = new Map();
+
+client.once('ready', async () => {
+    console.log(`Bot conectado como ${client.user.tag}`);
+    
+    client.application.commands.create(
+        new SlashCommandBuilder()
+            .setName('testearevento')
+            .setDescription('Envía un evento de prueba')
+            .addStringOption(option => 
+                option.setName('evento')
+                    .setDescription('Nombre del evento a probar')
+                    .setRequired(true)
+            )
+    );
+});
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+    
+    if (interaction.commandName === 'testearevento') {
+        const eventoNombre = interaction.options.getString('evento');
+        const evento = eventos.find(e => e.nombre.toLowerCase() === eventoNombre.toLowerCase());
+
+        if (!evento) {
+            await interaction.reply({ content: '❌ Evento no encontrado.', ephemeral: true });
+            return;
+        }
+
+        const canal = await client.channels.fetch(channelId);
+        if (!canal) return;
+
+        const embed = new EmbedBuilder()
+            .setTitle(`🚨 ${evento.nombre} 🚨`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un evento está en marcha. ¡Corre a hacerla antes de que sea tarde!`)
+            .addFields({ name: "🛠️ Requisitos", value: "*- Destornillador*", inline: true })
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/5gsm8Rv.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻", iconURL: "https://cdn-icons-png.flaticon.com/512/7175/7175311.png" });
+
+        const mensaje = await canal.send({ embeds: [embed] });
+        await mensaje.react('✅');
+        eventosActivos.set(mensaje.id, { evento, mensaje });
+
+        await interaction.reply({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, ephemeral: true });
+    }
+});
+
+client.on('messageReactionAdd', async (reaction, user) => {
+    if (user.bot) return;
+    if (reaction.emoji.name === '✅' && eventosActivos.has(reaction.message.id)) {
+        await reaction.message.delete().catch(() => {});
+        eventosActivos.delete(reaction.message.id);
+    }
+});
+
+client.login(process.env.TOKEN);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const cron = require("node-cron");
 
 const express = require("express");
@@ -386,4 +491,4 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
 }
 
 console.log("Token:", mySecret ? "Cargado correctamente" : "No cargado");
-client.login(mySecret);
+client.login(mySecret);*\
