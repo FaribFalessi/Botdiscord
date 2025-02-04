@@ -127,22 +127,28 @@ client.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
     if (reaction.emoji.name === '✅' && eventosActivos.has(reaction.message.id)) {
         // Obtener el objeto asociado al mensaje de evento activo
-        const { evento, mensaje } = eventosActivos.get(reaction.message.id);
+        const { evento, mensaje, recordatorioMensaje } = eventosActivos.get(reaction.message.id);
 
-        // Borrar el embed del evento
+        // Borrar el mensaje del embed de evento
         await mensaje.delete().catch(() => {});
-        
-        // Borrar el mensaje de notificación de que el evento ha comenzado
+
+        // Borrar el mensaje de notificación del evento
         const canal = await client.channels.fetch(channelId);
         const notificacionMensaje = await canal.messages.fetch({ limit: 1, before: mensaje.id });
         if (notificacionMensaje.size > 0) {
             await notificacionMensaje.first().delete().catch(() => {});
         }
 
+        // Borrar el mensaje de recordatorio si existe
+        if (recordatorioMensaje) {
+            await recordatorioMensaje.delete().catch(() => {});
+        }
+
         // Eliminar el evento activo del mapa
         eventosActivos.delete(reaction.message.id);
     }
 });
+
 
 function convertirHorarioArgentina(horario) {
     return moment.tz(horario, 'HH:mm', 'America/Argentina/Buenos_Aires').format('HH:mm');
