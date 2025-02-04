@@ -50,6 +50,23 @@ client.once('ready', async () => {
         } else {
             console.log('⚠️ El comando "testearevento" ya está registrado.');
         }
+
+        // Crear eventos y recordatorios
+        eventos.forEach(evento => {
+            if (evento.recordatorio) {
+                cron.schedule('*/5 * * * *', async () => {
+                    const canal = await client.channels.fetch(channelId);
+                    const mensajeRecordatorio = await canal.send(`📣 Recordatorio: **${evento.nombre}** está por comenzar.`);
+                    
+                    // Guardar el mensaje de recordatorio en el mapa
+                    eventosActivos.set(mensajeRecordatorio.id, { 
+                        evento, 
+                        mensaje: null,  // El mensaje del evento aún no ha sido enviado
+                        recordatorioMensaje: mensajeRecordatorio 
+                    });
+                });
+            }
+        });
     } catch (error) {
         console.error('❌ Error al intentar registrar el comando:', error);
     }
@@ -159,6 +176,7 @@ eventos.forEach(evento => {
 });
 
 client.login(mySecret);
+
 
 
 
