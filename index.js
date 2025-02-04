@@ -73,7 +73,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 });
 
-client.login(process.env.TOKEN);
+client.login(mySecret);
 
 
 
@@ -121,7 +121,7 @@ const client = new Client({
 });
 
 require("dotenv").config();
-const mySecret = process.env.TOKEN;
+const mySecret = process.env.;
 
 const channelID = "1334412534127788043"; // ID del canal donde se enviarán los mensajes
 
@@ -490,5 +490,5 @@ async function enviarMensaje(channel, tipo, esRecordatorio = false) {
     }
 }
 
-console.log("Token:", mySecret ? "Cargado correctamente" : "No cargado");
-client.login(mySecret);*\
+console.log(":", mySecret ? "Cargado correctamente" : "No cargado");
+client.login(mySecret);*/
