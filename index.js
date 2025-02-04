@@ -3,6 +3,11 @@ const { Client, GatewayIntentBits, EmbedBuilder, SlashCommandBuilder } = require
 const cron = require('node-cron');
 require('dotenv').config();
 
+const express = require("express");
+const app = express();
+const port = 3000;
+app.listen(port, () => console.log("Bot encendido"));
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions] });
 
 
