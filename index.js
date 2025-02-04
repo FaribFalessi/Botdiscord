@@ -56,8 +56,6 @@ client.once('ready', async () => {
 });
 
 
-
-
 let isProcessing = false; // Variable para controlar si el bot está procesando un comando
 
 client.on('interactionCreate', async interaction => {
@@ -128,7 +126,20 @@ client.on('interactionCreate', async interaction => {
 client.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
     if (reaction.emoji.name === '✅' && eventosActivos.has(reaction.message.id)) {
-        await reaction.message.delete().catch(() => {});
+        // Obtener el objeto asociado al mensaje de evento activo
+        const { evento, mensaje } = eventosActivos.get(reaction.message.id);
+
+        // Borrar el embed del evento
+        await mensaje.delete().catch(() => {});
+        
+        // Borrar el mensaje de notificación de que el evento ha comenzado
+        const canal = await client.channels.fetch(channelId);
+        const notificacionMensaje = await canal.messages.fetch({ limit: 1, before: mensaje.id });
+        if (notificacionMensaje.size > 0) {
+            await notificacionMensaje.first().delete().catch(() => {});
+        }
+
+        // Eliminar el evento activo del mapa
         eventosActivos.delete(reaction.message.id);
     }
 });
