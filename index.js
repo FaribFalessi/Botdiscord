@@ -62,29 +62,21 @@ let isProcessing = false; // Variable para controlar si el bot está procesando 
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
-
+    
     if (interaction.commandName === 'testearevento') {
-        if (isProcessing) {
-            await interaction.reply({ content: '⚠️ El comando ya está siendo procesado.', ephemeral: true });
-            return;
-        }
-
-        isProcessing = true; // Establece que el bot está procesando el comando
-
         const eventoNombre = interaction.options.getString('evento');
         const evento = eventos.find(e => e.nombre.toLowerCase() === eventoNombre.toLowerCase());
 
         if (!evento) {
-            await interaction.reply({ content: '❌ Evento no encontrado.', ephemeral: true });
-            isProcessing = false; // Finaliza el procesamiento
+            await interaction.reply({ content: '❌ Evento no encontrado.', flags: 64 });
             return;
         }
 
+        // Deferir la respuesta (indicar que se está procesando)
+        await interaction.deferReply({ ephemeral: true });
+
         const canal = await client.channels.fetch(channelId);
-        if (!canal) {
-            isProcessing = false; // Finaliza el procesamiento si el canal no existe
-            return;
-        }
+        if (!canal) return;
 
         await canal.send(`📣 El evento **${evento.nombre}** ha comenzado <@&${roleId}>`);
 
@@ -125,15 +117,12 @@ client.on('interactionCreate', async interaction => {
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
         }
 
-        // Enviar solo el evento elegido
         const mensaje = await canal.send({ embeds: [embed] });
         await mensaje.react('✅');
         eventosActivos.set(mensaje.id, { evento, mensaje });
 
-        // Confirmación del evento
-        await interaction.reply({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, flags: 64 });
-
-        isProcessing = false; // Finaliza el procesamiento
+        // Enviar la respuesta final con followUp
+        await interaction.followUp({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, flags: 64 });
     }
 });
 
