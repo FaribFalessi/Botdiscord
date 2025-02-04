@@ -26,8 +26,9 @@ const eventosActivos = new Map();
 
 client.once('ready', async () => {
     console.log(`Bot conectado como ${client.user.tag}`);
-    
-    client.application.commands.create(
+
+    const guild = await client.guilds.fetch('1036393864497475674'); // Reemplaza con el ID de tu servidor
+    await guild.commands.create(
         new SlashCommandBuilder()
             .setName('testearevento')
             .setDescription('Envía un evento de prueba')
@@ -37,6 +38,8 @@ client.once('ready', async () => {
                     .setRequired(true)
             )
     );
+
+    console.log('✅ Comando registrado en el servidor.');
 });
 
 client.on('interactionCreate', async interaction => {
