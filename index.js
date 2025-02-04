@@ -42,7 +42,7 @@ client.once('ready', async () => {
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
-    
+
     if (interaction.commandName === 'testearevento') {
         const eventoNombre = interaction.options.getString('evento');
         const evento = eventos.find(e => e.nombre.toLowerCase() === eventoNombre.toLowerCase());
@@ -94,11 +94,16 @@ client.on('interactionCreate', async interaction => {
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
         }
 
+        // Enviar solo el evento elegido
         const mensaje = await canal.send({ embeds: [embed] });
         await mensaje.react('✅');
         eventosActivos.set(mensaje.id, { evento, mensaje });
 
+        // Confirmación del evento
         await interaction.reply({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, ephemeral: true });
+
+        // Evitar que otros eventos se envíen
+        return;  // Añadir esto para asegurar que solo se envíe el evento seleccionado
     }
 });
 
