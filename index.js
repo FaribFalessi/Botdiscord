@@ -19,10 +19,10 @@ const eventos = [
     { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['07:00', '15:00', '20:00'], duracion: 3, recordatorio: false },
     { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['22:00', '10:00'], duracion: 11, recordatorio: true },
     { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '18:00'], duracion: 2, recordatorio: true },
-    { nombre: 'ELABORACION DE METAFETAMINA DIA 1', dias: [1], horarios: ['05:00'], duracion: 16, recordatorio: false },
-    { nombre: 'ELABORACION DE METAFETAMINA DIA 2', dias: [3], horarios: ['05:00'], duracion: 16, recordatorio: false },
-    { nombre: 'ELABORACION DE METAFETAMINA DIA 3', dias: [5], horarios: ['05:00'], duracion: 16, recordatorio: false },
-    { nombre: 'DIA DE RECOMPENSA', dias: [0], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'METAFETAMINA DIA 1', dias: [1], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'METAFETAMINA DIA 2', dias: [3], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'METAFETAMINA DIA 3', dias: [5], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'DIA RECOMPENSA', dias: [0], horarios: ['05:00'], duracion: 16, recordatorio: false },
     { nombre: 'REPARTO AEREO', dias: [2, 5], horarios: ['07:00', '15:00', '20:00'], duracion: 3, recordatorio: true },
     { nombre: 'BUSQUEDA DE CONTENEDORES', dias: [3, 5], horarios: ['00:00', '16:00', '18:00', '20:00'], duracion: 2, recordatorio: true },
 ];
@@ -132,7 +132,7 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/NpHargJ.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
                 break;
-             case 'ELABORACION DE METAFETAMINA DIA 1':
+             case 'METAFETAMINA DIA 1':
                 embed = new EmbedBuilder()
                     .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 1 🧪`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏭 Se ha iniciado el proceso de elaboración de metanfetamina. ¡Asegúrate de que todo salga bien!\n\n \`\`\`yaml\nRecordatorio: Llevar la Fotografía\`\`\``)
@@ -140,7 +140,7 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/TFtgsfa.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
                 break;
-            case 'ELABORACION DE METAFETAMINA DIA 2':
+            case 'METAFETAMINA DIA 2':
                 embed = new EmbedBuilder()
                     .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 2 🧪`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🔬 El proceso de purificación de la metanfetamina está en marcha. ¡No la arruines!\n\n \`\`\`yaml\nRecordatorio: Llevar la Fotografía\`\`\``)
@@ -148,7 +148,7 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/OFDgC6v.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
                 break;
-            case 'ELABORACION DE METAFETAMINA DIA 3':
+            case 'METAFETAMINA DIA 3':
                 embed = new EmbedBuilder()
                     .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 3 🧪`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚨 El producto final está casi listo. ¡Hora de empaquetar y pronto se podrá distribuir!\n\n \`\`\`yaml\nRecordatorio: Llevar la Fotografía\`\`\``)
@@ -156,7 +156,7 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/agBM4x3.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
                 break;
-            case 'DIA DE RECOMPENSA':
+            case 'DIA RECOMPENSA':
                 embed = new EmbedBuilder()
                     .setTitle(`🎁 DÍA DE RECOMPENSA 🎁`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🎉 Hoy es un día especial. ¡Reclama la Metanfetamina para poder distribuirla!`)
