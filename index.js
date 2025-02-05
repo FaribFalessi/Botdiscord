@@ -172,13 +172,15 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/4XBgoke.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
                 break;
-            default 'BUSQUEDA DE CONTENEDORES':
+            default:
                 embed = new EmbedBuilder()
                     .setTitle(`📦 BÚSQUEDA DE CONTENEDORES 📦`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏗️ Un contenedor valioso ha sido perdido en la zona portuaria. ¡Encuéntralo antes que los demás!`)
                     .setColor(0xff0000)
                     .setThumbnail("https://i.imgur.com/f2xplUC.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+            break;
+
         }
 
         // Solo se hace deferReply si la respuesta va a tomar más tiempo.
