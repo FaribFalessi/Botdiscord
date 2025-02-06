@@ -31,47 +31,27 @@ const eventosActivos = new Map();
 
 client.once('ready', async () => {
     try {
-        const guild = client.guilds.cache.get('1036393864497475674'); // Reemplaza con el ID de tu servidor
+        console.log('✅ Bot listo.');
 
-        if (!guild) {
-            console.log('❌ No se pudo encontrar la guild con ese ID');
-            return;
-        }
+        const canal = await client.channels.fetch(channelId);
 
-        // Verifica si el comando ya está registrado
-        const commands = await guild.commands.fetch();
-        if (!commands.some(cmd => cmd.name === 'testearevento')) {
-            // Registra el comando solo en este servidor específico
-            await guild.commands.create(
-                new SlashCommandBuilder()
-                    .setName('testearevento')
-                    .setDescription('Envía un evento de prueba')
-                    .addStringOption(option => 
-                        option.setName('evento')
-                            .setDescription('Nombre del evento a probar')
-                            .setRequired(true)
-                    )
-            );
-            console.log('✅ Comando registrado en el servidor.');
-        } else {
-            console.log('⚠️ El comando "testearevento" ya está registrado.');
-        }
-
-        // Crear eventos y recordatorios
         eventos.forEach(evento => {
             if (evento.recordatorio) {
-                cron.schedule('*/5 * * * *', async () => {
-                    const canal = await client.channels.fetch(channelId);
-                    
-                    // Después de que el evento haya comenzado, enviamos el recordatorio cada hora
-                    cron.schedule(`0 */1 * * *`, async () => {
-                        const mensajeRecordatorio = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
+                evento.horarios.forEach(horario => {
+                    const [hora, minuto] = horario.split(':');
+
+                    cron.schedule(`${minuto} ${hora} * * ${evento.dias.join(',')}`, async () => {
+                        const mensaje = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
+
+                        // Guardar el mensaje en eventosActivos para eliminarlo si es necesario
+                        eventosActivos.set(mensaje.id, { evento, mensaje });
                     });
                 });
             }
         });
+
     } catch (error) {
-        console.error('❌ Error al intentar registrar el comando:', error);
+        console.error('❌ Error al iniciar los eventos:', error);
     }
 });
 
