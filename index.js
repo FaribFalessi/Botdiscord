@@ -62,13 +62,10 @@ client.once('ready', async () => {
             if (evento.recordatorio) {
                 cron.schedule('*/5 * * * *', async () => {
                     const canal = await client.channels.fetch(channelId);
-                    const mensajeRecordatorio = await canal.send(`📣 Recordatorio: **${evento.nombre}** está por comenzar.`);
                     
-                    // Guardar el mensaje de recordatorio en el mapa
-                    eventosActivos.set(mensajeRecordatorio.id, { 
-                        evento, 
-                        mensaje: null,  // El mensaje del evento aún no ha sido enviado
-                        recordatorioMensaje: mensajeRecordatorio 
+                    // Después de que el evento haya comenzado, enviamos el recordatorio cada hora
+                    cron.schedule(`0 */1 * * *`, async () => {
+                        const mensajeRecordatorio = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
                     });
                 });
             }
@@ -77,7 +74,6 @@ client.once('ready', async () => {
         console.error('❌ Error al intentar registrar el comando:', error);
     }
 });
-
 
 let isProcessing = false; // Variable para controlar si el bot está procesando un comando
 
@@ -132,7 +128,7 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/NpHargJ.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
                 break;
-             case 'METAFETAMINA DIA 1':
+            case 'METAFETAMINA DIA 1':
                 embed = new EmbedBuilder()
                     .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 1 🧪`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏭 Se ha iniciado el proceso de elaboración de metanfetamina. ¡Asegúrate de que todo salga bien!\n\n \`\`\`yaml\nRecordatorio: Llevar la Fotografía\`\`\``)
@@ -172,7 +168,7 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/4XBgoke.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
                 break;
-            default:
+            case 'BUSQUEDA DE CONTENEDORES':
                 embed = new EmbedBuilder()
                     .setTitle(`📦 BÚSQUEDA DE CONTENEDORES 📦`)
                     .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏗️ Un contenedor valioso ha sido perdido en la zona portuaria. ¡Encuéntralo antes que los demás!`)
@@ -180,7 +176,6 @@ client.on('interactionCreate', async interaction => {
                     .setThumbnail("https://i.imgur.com/f2xplUC.png")
                     .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
             break;
-
         }
 
         // Solo se hace deferReply si la respuesta va a tomar más tiempo.
@@ -195,7 +190,6 @@ client.on('interactionCreate', async interaction => {
         await interaction.followUp({ content: `✅ Evento **${evento.nombre}** enviado correctamente.`, flags: 64 });
     }
 });
-
 
 client.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
@@ -223,7 +217,6 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 });
 
-
 function convertirHorarioArgentina(horario) {
     return moment.tz(horario, 'HH:mm', 'America/Argentina/Buenos_Aires').format('HH:mm');
 }
@@ -233,6 +226,7 @@ eventos.forEach(evento => {
 });
 
 client.login(mySecret);
+
 
 
 
