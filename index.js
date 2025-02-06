@@ -15,7 +15,7 @@ const channelId = '1334412534127788043'; // Reemplázalo con el ID del canal don
 const roleId = '1334408903034667029'; // Reemplázalo con el ID del rol a mencionar en los recordatorios
 
 const eventos = [
-    { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['23:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
+    { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
     { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '20:00'], duracion: 3, recordatorio: false },
     { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['22:00', '10:00'], duracion: 11, recordatorio: true },
     { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '16:00', '18:00'], duracion: 2, recordatorio: true },
@@ -24,7 +24,7 @@ const eventos = [
     { nombre: 'METAFETAMINA DIA 3', dias: [5], horarios: ['05:00'], duracion: 16, recordatorio: false },
     { nombre: 'DIA RECOMPENSA', dias: [0], horarios: ['05:00'], duracion: 16, recordatorio: false },
     { nombre: 'REPARTO AEREO', dias: [2, 5], horarios: ['07:00', '15:00', '20:00'], duracion: 3, recordatorio: true },
-    { nombre: 'BUSQUEDA DE CONTENEDORES', dias: [3, 5], horarios: ['00:00', '16:00', '18:00', '20:00'], duracion: 2, recordatorio: true },
+    { nombre: 'BUSQUEDA DE CONTENEDORES', dias: [4, 5], horarios: ['00:00', '15:00', '17:00', '19:00'], duracion: 2, recordatorio: true },
 ];
 
 const eventosActivos = new Map();
