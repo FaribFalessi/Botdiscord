@@ -18,7 +18,7 @@ const reactionEmoji = '✅';
 const activeReminders = new Map();
 
 const eventos = [
-    { nombre: 'ROBO A VEHÍCULO', dias: [2, 5], horarios: ['02:41', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
+    { nombre: 'ROBO A VEHÍCULO', dias: [2, 5], horarios: ['02:46', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
     { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '20:00'], duracion: 3, recordatorio: false }
 ];
 
