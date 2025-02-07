@@ -3,12 +3,11 @@ const cron = require('node-cron');
 const moment = require('moment-timezone');
 require('dotenv').config();
 
-const express = require('express');
+const express = require("express");
 const app = express();
+const port = 3000;
+app.listen(port, () => console.log("Bot encendido"));
 
-const PORT = process.env.PORT || 3000;
-app.get('/', (req, res) => res.send('Bot de Discord en ejecución.'));
-app.listen(PORT, () => console.log(`Servidor web activo en el puerto ${PORT}`));
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions] });
 const mySecret = process.env.TOKEN;
