@@ -3,6 +3,13 @@ const cron = require('node-cron');
 const moment = require('moment-timezone');
 require('dotenv').config();
 
+const express = require('express');
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+app.get('/', (req, res) => res.send('Bot de Discord en ejecución.'));
+app.listen(PORT, () => console.log(`Servidor web activo en el puerto ${PORT}`));
+
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions] });
 const mySecret = process.env.TOKEN;
 const channelId = '1334412534127788043';
