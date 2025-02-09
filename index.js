@@ -16,7 +16,7 @@ const roleId = '1334408903034667029'; // Reemplázalo con el ID del rol a mencio
 
 const eventos = [
     { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
-    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '23:14'], duracion: 3, recordatorio: false },
+    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '23:18'], duracion: 3, recordatorio: false },
     { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['02:10', '10:00'], duracion: 11, recordatorio: true },
     { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '16:00', '18:00'], duracion: 2, recordatorio: true },
     { nombre: 'METAFETAMINA DIA 1', dias: [1], horarios: ['05:00'], duracion: 16, recordatorio: false },
@@ -197,12 +197,20 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 });
 
-function convertirHorarioArgentina(horario) {
-    return moment.tz(horario, 'HH:mm', 'America/Argentina/Buenos_Aires').format('HH:mm');
-}
-
 eventos.forEach(evento => {
-    evento.horarios = evento.horarios.map(horario => convertirHorarioArgentina(horario));
+    if (evento.recordatorio) {
+        evento.horarios.forEach(horario => {
+            const horarioArgentina = moment.tz(horario, 'HH:mm', 'America/Argentina/Buenos_Aires');
+            const hora = horarioArgentina.hour();
+            const minuto = horarioArgentina.minute();
+
+            cron.schedule(`${minuto} ${hora} * * ${evento.dias.join(',')}`, async () => {
+                const mensaje = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
+                eventosActivos.set(mensaje.id, { evento, mensaje });
+            });
+        });
+    }
 });
+
 
 client.login(mySecret);
