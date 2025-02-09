@@ -177,6 +177,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 });
 
 // Comando para testear el evento y recordatorio
+// Comando para testear el evento y el recordatorio
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isCommand()) {
         if (interaction.commandName === 'testevent') {
@@ -184,8 +185,29 @@ client.on('interactionCreate', async (interaction) => {
             await sendEvent(event);
             await interaction.reply("Evento de prueba enviado.");
         }
+
+        // Comando para testear el recordatorio
+        if (interaction.commandName === 'testreminder') {
+            const event = EVENTS[0];  // Puedes modificarlo para probar diferentes eventos
+            const channel = await client.channels.fetch(EVENT_CHANNEL_ID);
+            if (!channel) return interaction.reply("Canal no encontrado.");
+
+            // Crear el embed de recordatorio
+            const reminderEmbed = new EmbedBuilder()
+                .setTitle(`⏰ Recordatorio: ${event.nombre} ⏰`)
+                .setDescription(`*🟠 Recordatorio: El evento sigue activo: ${event.nombre}.*\n\n ¡No olvides unirte antes de que termine!`)
+                .setColor(0xff6600);
+
+            // Enviar el recordatorio
+            const message = await channel.send({ embeds: [reminderEmbed] });
+            await message.react("✅");
+
+            // Responder al usuario
+            await interaction.reply("Recordatorio de prueba enviado.");
+        }
     }
 });
+
 
 // Iniciar bot
 client.login(process.env.TOKEN);
