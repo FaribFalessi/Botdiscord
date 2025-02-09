@@ -19,7 +19,7 @@ const EVENTS = [
     { 
         name: "Evento con recordatorios", 
         days: ["Sunday", "Tuesday"], 
-        times: ["02:00", "08:33"], 
+        times: ["02:00", "08:40"], 
         duration: 3, 
         reminders: true 
     },
