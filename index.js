@@ -23,16 +23,16 @@ const EVENT_CHANNEL_ID = "1334412534127788043";  // ID del canal donde se envía
 
 // Eventos con los días, horarios y si tienen recordatorios o no
 const EVENTS = [
-    { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
-    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '20:00'], duracion: 3, recordatorio: false },
-    { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['02:10', '10:00'], duracion: 11, recordatorio: true },
-    { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '16:00', '18:00'], duracion: 2, recordatorio: true },
-    { nombre: 'METAFETAMINA DIA 1', dias: [1], horarios: ['05:00'], duracion: 16, recordatorio: false },
-    { nombre: 'METAFETAMINA DIA 2', dias: [3], horarios: ['05:00'], duracion: 16, recordatorio: false },
-    { nombre: 'METAFETAMINA DIA 3', dias: [5], horarios: ['05:00'], duracion: 16, recordatorio: false },
-    { nombre: 'DIA RECOMPENSA', dias: [0], horarios: ['05:00'], duracion: 16, recordatorio: false },
-    { nombre: 'REPARTO AEREO', dias: [2, 5], horarios: ['07:00', '15:00', '20:00'], duracion: 3, recordatorio: true },
-    { nombre: 'BUSQUEDA DE CONTENEDORES', dias: [4, 5], horarios: ['00:00', '15:00', '17:00', '19:00'], duracion: 2, recordatorio: true }
+    { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '12:00', '14:00', '16:00'], duracion: 2, recordatorio: true },
+    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '14:00', '19:00'], duracion: 3, recordatorio: false },
+    { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['21:00', '09:00'], duracion: 11, recordatorio: true },
+    { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['23:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
+    { nombre: 'METAFETAMINA DIA 1', dias: [1], horarios: ['04:00'], duracion: 16, recordatorio: false },
+    { nombre: 'METAFETAMINA DIA 2', dias: [3], horarios: ['04:00'], duracion: 16, recordatorio: false },
+    { nombre: 'METAFETAMINA DIA 3', dias: [5], horarios: ['04:00'], duracion: 16, recordatorio: false },
+    { nombre: 'DIA RECOMPENSA', dias: [0], horarios: ['04:00'], duracion: 16, recordatorio: false },
+    { nombre: 'REPARTO AEREO', dias: [2, 5], horarios: ['06:00', '14:00', '19:00'], duracion: 3, recordatorio: true },
+    { nombre: 'BUSQUEDA DE CONTENEDORES', dias: [4, 5, 0], horarios: ['23:00', '15:00', '17:00', '19:00'], duracion: 2, recordatorio: true }
 ];
 
 // Mapas para gestionar eventos activos y recordatorios
@@ -43,7 +43,7 @@ async function sendEvent(event) {
     const channel = await client.channels.fetch(EVENT_CHANNEL_ID);
     if (!channel) return console.error("Canal no encontrado");
 
-    const mentionMessage = await channel.send(`<@&${EVENT_ROLE_ID}> 🔔 **¡Atención! Se ha programado un nuevo evento.**`);
+    const mentionMessage = await channel.send(`<@&${EVENT_ROLE_ID}> 🔔 **¡Atención! Hay un evento nuevo en curso, ¡Apurate hacerlo!.**`);
 
     let embed;
     switch (event.nombre) {
@@ -140,7 +140,7 @@ async function sendEvent(event) {
         const interval = setInterval(async () => {
             const newEmbed = new EmbedBuilder(embed)
                 .setTitle(`⏰ Recordatorio: ${event.nombre} ⏰`)
-                .setDescription(`*🟠 Recordatorio: El evento sigue activo: ${event.nombre}.*\n\n ¡No olvides unirte antes de que termine!`)
+                .setDescription(`*🟠 Recordatorio: El evento sigue activo: ${event.nombre}.*\n\n ¡No olvides hacerlo o unirte antes de que termine!`)
                 .setColor(0xff6600);
 
             // Eliminar el embed original antes de enviar el nuevo
