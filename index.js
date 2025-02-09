@@ -2,6 +2,11 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const moment = require('moment-timezone');
 
+const express = require("express");
+const app = express();
+const port = 3000;
+app.listen(port, () => console.log("Bot encendido"));
+
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
 });
