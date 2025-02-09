@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits, EmbedBuilder, Partials, SlashCommandBuilder } = require('discord.js');
 const moment = require('moment-timezone');
+const { InteractionType } = require('discord.js');
 
 const express = require("express");
 const app = express();
@@ -25,7 +26,7 @@ const EVENTS = [
     { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
     { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '20:00'], duracion: 3, recordatorio: false },
     { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['02:10', '10:00'], duracion: 11, recordatorio: true },
-    { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '15:07', '18:00'], duracion: 2, recordatorio: true },
+    { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '16:00', '18:00'], duracion: 2, recordatorio: true },
     { nombre: 'METAFETAMINA DIA 1', dias: [1], horarios: ['05:00'], duracion: 16, recordatorio: false },
     { nombre: 'METAFETAMINA DIA 2', dias: [3], horarios: ['05:00'], duracion: 16, recordatorio: false },
     { nombre: 'METAFETAMINA DIA 3', dias: [5], horarios: ['05:00'], duracion: 16, recordatorio: false },
@@ -139,38 +140,56 @@ async function sendEvent(event) {
         const interval = setInterval(async () => {
             const newEmbed = new EmbedBuilder(embed)
                 .setTitle(`⏰ Recordatorio: ${event.nombre} ⏰`)
-                .setDescription(`*🟠 Actividad continua: ${event.nombre}.*\n\n ¡Recuerda! La actividad sigue activa.`)
+                .setDescription(`*🟠 Recordatorio: El evento sigue activo: ${event.nombre}.*\n\n ¡No olvides unirte antes de que termine!`)
                 .setColor(0xff6600);
-            await message.edit({ embeds: [newEmbed] });
+
+            // Eliminar el embed original antes de enviar el nuevo
+            await message.delete();
+            const updatedMessage = await channel.send({ embeds: [newEmbed] });
+            await updatedMessage.react("✅");
+            activeEvents.set(updatedMessage.id, { mentionMessage, event });
         }, 3600000);  // Recordatorio cada hora
         activeReminders.set(message.id, interval);
     }
 }
 
-// Usamos moment.js para ejecutar los eventos a la hora correcta.
-client.on('ready', async () => {
-    console.log(`${client.user.tag} está listo.`);
-    
-    // Revisa cada evento a programar
-    setInterval(() => {
-        for (const event of EVENTS) {
-            const now = moment().tz("America/Argentina/Buenos_Aires");
-            const dayOfWeek = now.day();  // Día actual (0-6)
+// Reacciona con ✅ para eliminar el mensaje
+client.on('messageReactionAdd', async (reaction, user) => {
+    if (reaction.emoji.name === '✅' && !user.bot) {
+        const messageId = reaction.message.id;
+        const eventData = activeEvents.get(messageId);
 
-            // Si el evento debe ejecutarse hoy y está en la lista de horarios para el día
-            if (event.dias.includes(dayOfWeek)) {
-                for (const horario of event.horarios) {
-                    const [hours, minutes] = horario.split(':').map(Number);
-                    if (now.hours() === hours && now.minutes() === minutes) {
-                        sendEvent(event);
-                    }
-                }
+        if (eventData) {
+            // Eliminar el mensaje de evento
+            await reaction.message.delete();
+            // Eliminar el mensaje de mención
+            await eventData.mentionMessage.delete();
+            // Limpiar el recordatorio si existe
+            const interval = activeReminders.get(messageId);
+            if (interval) {
+                clearInterval(interval);
+                activeReminders.delete(messageId);
             }
+            // Eliminar el evento activo
+            activeEvents.delete(messageId);
         }
-    }, 60000);  // Comprobar cada minuto
+    }
 });
 
+// Comando para testear el evento y recordatorio
+client.on('interactionCreate', async (interaction) => {
+    if (interaction.isCommand()) {
+        if (interaction.commandName === 'testevent') {
+            const event = EVENTS[0];  // Puedes modificarlo para probar diferentes eventos
+            await sendEvent(event);
+            await interaction.reply("Evento de prueba enviado.");
+        }
+    }
+});
+
+// Iniciar bot
 client.login(process.env.TOKEN);
+
 
 
 
