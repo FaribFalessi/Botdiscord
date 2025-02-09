@@ -103,8 +103,25 @@ function checkEvents() {
 }
 
 // Evento de inicio del bot
-client.once('ready', () => {
+client.once('ready', async () => {
     console.log(`✅ Bot conectado como ${client.user.tag}`);
+
+    // Registrar comando /testevent en el servidor
+    const guild = client.guilds.cache.first();
+    if (guild) {
+        await guild.commands.create(
+            new SlashCommandBuilder()
+                .setName("testevent")
+                .setDescription("Envía un evento de prueba")
+                .addStringOption(option => 
+                    option.setName("evento")
+                        .setDescription("Nombre del evento a probar")
+                        .setRequired(true)
+                )
+        );
+        console.log("✅ Comando /testevent registrado");
+    }
+
     checkEvents();
     setInterval(checkEvents, 60 * 1000); // Verifica cada minuto
 });
@@ -122,20 +139,17 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === "testevent") {
-        const event = EVENTS[0]; // Usa el primer evento como prueba
-        await sendEvent(event);
-        await interaction.reply({ content: "✅ Evento de prueba enviado.", ephemeral: true });
-    }
-});
+        const eventName = interaction.options.getString("evento");
 
-// Registro de comandos
-client.on('ready', async () => {
-    const guild = client.guilds.cache.first();
-    if (guild) {
-        await guild.commands.create(new SlashCommandBuilder()
-            .setName("testevent")
-            .setDescription("Envía un evento de prueba para testeo."));
-        console.log("✅ Comando /testevent registrado");
+        // Buscar el evento por nombre
+        const event = EVENTS.find(e => e.name.toLowerCase() === eventName.toLowerCase());
+
+        if (!event) {
+            return await interaction.reply({ content: "⚠️ Evento no encontrado. Usa un nombre válido.", ephemeral: true });
+        }
+
+        await sendEvent(event);
+        await interaction.reply({ content: `✅ Evento **${event.name}** enviado correctamente.`, ephemeral: true });
     }
 });
 
