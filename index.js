@@ -47,93 +47,93 @@ async function sendEvent(event) {
 
     let embed;
     switch (event.nombre) {
-        case 'ROBO A VEHÍCULO':
-            embed = new EmbedBuilder()
-                .setTitle(`🚨 ROBO A VEHÍCULO 🚨`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un vehículo está siendo robado. ¡Únete a la acción antes de que sea tarde!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/5gsm8Rv.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'MISIÓN DE TRÁFICO ILEGAL':
-            embed = new EmbedBuilder()
-                .setTitle(`🚛 MISIÓN DE TRÁFICO ILEGAL 🚛`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚛 Un nuevo cargamento ilegal debe ser transportado. ¡Ten cuidado con la policía!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/EXbQ7Mw.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'ROBO A NEGOCIO':
-            embed = new EmbedBuilder()
-                .setTitle(`🏪 ROBO A NEGOCIO 🏪`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏪 Se está ejecutando un robo a un comercio. ¡Corre antes de que llegue la policía!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/JQRIWS1.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'LANCHA ENCALLADA':
-            embed = new EmbedBuilder()
-                .setTitle(`⛵ LANCHA ENCALLADA ⛵`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n ⛵ Una lancha ha encallado y necesita ser recuperada. ¡No dejes pasar la oportunidad!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/NpHargJ.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'METAFETAMINA DIA 1':
-            embed = new EmbedBuilder()
-                .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 1 🧪`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏭 Se ha iniciado el proceso de elaboración de metanfetamina. ¡Asegúrate de que todo salga bien!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/TFtgsfa.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'METAFETAMINA DIA 2':
-            embed = new EmbedBuilder()
-                .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 2 🧪`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🔬 El proceso de purificación de la metanfetamina está en marcha. ¡No la arruines!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/OFDgC6v.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'METAFETAMINA DIA 3':
-            embed = new EmbedBuilder()
-                .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 3 🧪`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚨 El producto final está casi listo. ¡Hora de empaquetar y pronto se podrá distribuir!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/agBM4x3.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'DIA RECOMPENSA':
-            embed = new EmbedBuilder()
-                .setTitle(`🎁 DÍA DE RECOMPENSA 🎁`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🎉 Hoy es un día especial. ¡Reclama la Metanfetamina para poder distribuirla!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/0yrrHut.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'REPARTO AEREO':
-            embed = new EmbedBuilder()
-                .setTitle(`✈️ REPARTO AÉREO ✈️`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 📦 Un cargamento está siendo distribuido por vía aérea. ¡Asegura tu parte antes de que otros lo hagan!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/4XBgoke.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-        case 'BUSQUEDA DE CONTENEDORES':
-            embed = new EmbedBuilder()
-                .setTitle(`📦 BÚSQUEDA DE CONTENEDORES 📦`)
-                .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏗️ Un contenedor valioso ha sido perdido en la zona portuaria. ¡Encuéntralo antes que los demás!`)
-                .setColor(0xff0000)
-                .setThumbnail("https://i.imgur.com/f2xplUC.png")
-                .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-            break;
-    }
+    case 'ROBO A VEHÍCULO':
+        embed = new EmbedBuilder()
+            .setTitle(`🚨 ROBO A VEHÍCULO 🚨`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚗 Un vehículo está siendo robado. ¡Únete a la acción antes de que sea tarde!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/5gsm8Rv.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'MISIÓN DE TRÁFICO ILEGAL':
+        embed = new EmbedBuilder()
+            .setTitle(`🚛 MISIÓN DE TRÁFICO ILEGAL 🚛`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚛 Un nuevo cargamento ilegal debe ser transportado. ¡Ten cuidado con la policía!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/EXbQ7Mw.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'ROBO A NEGOCIO':
+        embed = new EmbedBuilder()
+            .setTitle(`🏪 ROBO A NEGOCIO 🏪`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏪 Se está ejecutando un robo a un comercio. ¡Corre antes de que llegue la policía!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/JQRIWS1.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'LANCHA ENCALLADA':
+        embed = new EmbedBuilder()
+            .setTitle(`⛵ LANCHA ENCALLADA ⛵`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n ⛵ Una lancha ha encallado y necesita ser recuperada. ¡No dejes pasar la oportunidad!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/NpHargJ.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'METAFETAMINA DIA 1':
+        embed = new EmbedBuilder()
+            .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 1 🧪`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏭 Se ha iniciado el proceso de elaboración de metanfetamina. ¡Asegúrate de que todo salga bien!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/TFtgsfa.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'METAFETAMINA DIA 2':
+        embed = new EmbedBuilder()
+            .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 2 🧪`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🔬 El proceso de purificación de la metanfetamina está en marcha. ¡No la arruines!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/OFDgC6v.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'METAFETAMINA DIA 3':
+        embed = new EmbedBuilder()
+            .setTitle(`🧪 ELABORACION DE METANFETAMINA DÍA 3 🧪`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🚨 El producto final está casi listo. ¡Hora de empaquetar y pronto se podrá distribuir!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/agBM4x3.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'DIA RECOMPENSA':
+        embed = new EmbedBuilder()
+            .setTitle(`🎁 DÍA DE RECOMPENSA 🎁`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🎉 Hoy es un día especial. ¡Reclama la Metanfetamina para poder distribuirla!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/0yrrHut.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'REPARTO AEREO':
+        embed = new EmbedBuilder()
+            .setTitle(`✈️ REPARTO AÉREO ✈️`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 📦 Un cargamento está siendo distribuido por vía aérea. ¡Asegura tu parte antes de que otros lo hagan!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/4XBgoke.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+    case 'BUSQUEDA DE CONTENEDORES':
+        embed = new EmbedBuilder()
+            .setTitle(`📦 BÚSQUEDA DE CONTENEDORES 📦`)
+            .setDescription(`*🟢 ACTIVIDAD ACTIVA*\n\n 🏗️ Un contenedor valioso ha sido perdido en la zona portuaria. ¡Encuéntralo antes que los demás!`)
+            .setColor(0xff0000)
+            .setThumbnail("https://i.imgur.com/f2xplUC.png")
+            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
+        break;
+}
 
     const message = await channel.send({ embeds: [embed] });
     await message.react("✅");
 
     // Guardar la referencia del mensaje de evento y de la mención
-    activeEvents.set(message.id, { mentionMessage, event });
+    activeEvents.set(message.id, { mentionMessage, event, reacted: false });
 
     if (event.recordatorio) {
         // Iniciar recordatorios
@@ -147,10 +147,31 @@ async function sendEvent(event) {
             await message.delete();
             const updatedMessage = await channel.send({ embeds: [newEmbed] });
             await updatedMessage.react("✅");
-            activeEvents.set(updatedMessage.id, { mentionMessage, event });
+            activeEvents.set(updatedMessage.id, { mentionMessage, event, reacted: false });
         }, 3600000);  // Recordatorio cada hora
         activeReminders.set(message.id, interval);
     }
+
+    // Eliminar el mensaje después de la duración del evento (en milisegundos)
+    const eventDurationInMs = event.duracion * 60 * 60 * 1000;  // Duración en milisegundos
+    setTimeout(async () => {
+        const eventData = activeEvents.get(message.id);
+        if (eventData && !eventData.reacted) {
+            // Eliminar el mensaje de evento y la mención si no hubo reacciones
+            await message.delete();
+            await eventData.mentionMessage.delete();
+
+            // Limpiar el recordatorio si existe
+            const interval = activeReminders.get(message.id);
+            if (interval) {
+                clearInterval(interval);
+                activeReminders.delete(message.id);
+            }
+
+            // Eliminar el evento activo
+            activeEvents.delete(message.id);
+        }
+    }, eventDurationInMs);
 }
 
 // Reacciona con ✅ para eliminar el mensaje
@@ -160,6 +181,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
         const eventData = activeEvents.get(messageId);
 
         if (eventData) {
+            // Marcar como reaccionado
+            eventData.reacted = true;
+
             // Eliminar el mensaje de evento
             await reaction.message.delete();
             // Eliminar el mensaje de mención
@@ -189,7 +213,3 @@ client.on('interactionCreate', async (interaction) => {
 
 // Iniciar bot
 client.login(process.env.TOKEN);
-
-
-
-
