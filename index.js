@@ -20,12 +20,11 @@ const client = new Client({
 const EVENT_ROLE_ID = "1334408903034667029";  // Reemplaza con el ID del rol
 const EVENT_CHANNEL_ID = "1334412534127788043";  // Reemplaza con el ID del canal
 
-// Configuración de eventos
 const EVENTS = [
     { 
         name: "Evento con recordatorios", 
         days: ["Sunday", "Tuesday"], 
-        times: ["02:00", "08:40"], 
+        times: ["02:00", "09:25"], 
         duration: 3, 
         reminders: true 
     },
@@ -38,13 +37,11 @@ const EVENTS = [
     }
 ];
 
-// Función para enviar eventos
 async function sendEvent(event) {
     const channel = await client.channels.fetch(EVENT_CHANNEL_ID);
     if (!channel) return console.error("Canal no encontrado");
 
-    const mention = `<@&${EVENT_ROLE_ID}> 🔔 **¡Atención! Se ha programado un nuevo evento.**`;
-    await channel.send(mention);
+    const mentionMessage = await channel.send(`<@&${EVENT_ROLE_ID}> 🔔 **¡Atención! Se ha programado un nuevo evento.**`);
 
     const embed = new EmbedBuilder()
         .setTitle(event.name)
@@ -58,9 +55,14 @@ async function sendEvent(event) {
     if (event.reminders) {
         scheduleReminders(event, message);
     }
+
+    // Guardar la referencia del mensaje de atención junto con el embed
+    activeEvents.set(message.id, mentionMessage);
 }
 
-// Función para programar recordatorios
+// Mapa para almacenar los mensajes de aviso relacionados con los eventos
+const activeEvents = new Map();
+
 function scheduleReminders(event, originalMessage) {
     let elapsed = 1;
     const reminderInterval = setInterval(async () => {
@@ -81,7 +83,6 @@ function scheduleReminders(event, originalMessage) {
         const newMessage = await channel.send({ embeds: [embed] });
         await newMessage.react("✅");
 
-        // Eliminar el mensaje anterior de recordatorio
         await originalMessage.delete().catch(() => {});
         originalMessage = newMessage;
 
@@ -89,7 +90,6 @@ function scheduleReminders(event, originalMessage) {
     }, 60 * 60 * 1000);
 }
 
-// Función para verificar si es hora de enviar un evento
 function checkEvents() {
     const now = moment().tz("America/Argentina/Buenos_Aires");
     const currentDay = now.format("dddd");
@@ -102,11 +102,9 @@ function checkEvents() {
     });
 }
 
-// Evento de inicio del bot
 client.once('ready', async () => {
     console.log(`✅ Bot conectado como ${client.user.tag}`);
 
-    // Registrar comando /testevent en el servidor
     const guild = client.guilds.cache.first();
     if (guild) {
         await guild.commands.create(
@@ -123,25 +121,27 @@ client.once('ready', async () => {
     }
 
     checkEvents();
-    setInterval(checkEvents, 60 * 1000); // Verifica cada minuto
+    setInterval(checkEvents, 60 * 1000);
 });
 
-// Evento para eliminar mensaje cuando alguien reacciona con ✅
+// Ahora también eliminamos el mensaje de aviso cuando se reacciona con ✅
 client.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
     if (reaction.emoji.name === "✅") {
+        const mentionMessage = activeEvents.get(reaction.message.id);
+        if (mentionMessage) {
+            await mentionMessage.delete().catch(() => {});
+            activeEvents.delete(reaction.message.id);
+        }
         await reaction.message.delete().catch(() => {});
     }
 });
 
-// Comando para testear eventos
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === "testevent") {
         const eventName = interaction.options.getString("evento");
-
-        // Buscar el evento por nombre
         const event = EVENTS.find(e => e.name.toLowerCase() === eventName.toLowerCase());
 
         if (!event) {
