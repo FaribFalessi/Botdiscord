@@ -16,7 +16,7 @@ const roleId = '1334408903034667029'; // Reemplázalo con el ID del rol a mencio
 
 const eventos = [
     { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
-    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '23:29'], duracion: 3, recordatorio: false },
+    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '23:32'], duracion: 3, recordatorio: false },
     { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['02:10', '10:00'], duracion: 11, recordatorio: true },
     { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '16:00', '18:00'], duracion: 2, recordatorio: true },
     { nombre: 'METAFETAMINA DIA 1', dias: [1], horarios: ['05:00'], duracion: 16, recordatorio: false },
@@ -197,34 +197,25 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 });
 
-const canal = await client.channels.fetch(channelId).catch(err => console.error('❌ Error al obtener el canal:', err));
-if (!canal) return console.log('⚠️ Canal no encontrado o sin permisos.');
-
-const permisos = canal.permissionsFor(client.user);
-if (!permisos.has('SEND_MESSAGES')) {
-    console.log('🚫 El bot no tiene permiso para enviar mensajes en este canal.');
-    return;
+async function obtenerCanal(channelId) {
+    try {
+        return await client.channels.fetch(channelId);
+    } catch (err) {
+        console.error('❌ Error al obtener el canal:', err);
+        return null;
+    }
 }
 
-eventos.forEach(evento => {
-    if (evento.recordatorio) {
-        evento.horarios.forEach(horario => {
-            const horarioArgentina = moment.tz(horario, 'HH:mm', 'America/Argentina/Buenos_Aires');
-            const hora = horarioArgentina.hour();
-            const minuto = horarioArgentina.minute();
-            
-            console.log(`📆 Programando eventos para: ${evento.nombre} en los días ${evento.dias.join(',')} a las ${evento.horarios.join(',')}`);
+// Luego úsalo dentro de una función async
+cron.schedule(`${minuto} ${hora} * * ${evento.dias.join(',')}`, async () => {
+    console.log(`⏰ Ejecutando cron para ${evento.nombre} a las ${hora}:${minuto} (UTC-3)`);
 
-            cron.schedule(`${minuto} ${hora} * * ${evento.dias.join(',')}`, async () => {
-            console.log(`⏰ Ejecutando cron para ${evento.nombre} a las ${hora}:${minuto} (UTC-3)`);
+    const canal = await obtenerCanal(channelId);
+    if (!canal) return console.log('⚠️ Canal no encontrado.');
 
-            const mensaje = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
-            eventosActivos.set(mensaje.id, { evento, mensaje });
-            });
-
-        });
-    }
+    await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
 });
+
 
 
 client.login(mySecret);
