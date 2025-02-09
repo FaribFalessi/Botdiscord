@@ -17,14 +17,14 @@ const client = new Client({
     partials: [Partials.Message, Partials.Reaction, Partials.User]
 });
 
-const EVENT_ROLE_ID = "1334408903034667029";  // Reemplaza con el ID del rol
-const EVENT_CHANNEL_ID = "1334412534127788043";  // Reemplaza con el ID del canal
+const EVENT_ROLE_ID = "1334408903034667029";  // ID del rol a mencionar
+const EVENT_CHANNEL_ID = "1334412534127788043";  // ID del canal donde se envían los eventos
 
 const EVENTS = [
     { 
         name: "Evento con recordatorios", 
         days: ["Sunday", "Tuesday"], 
-        times: ["02:00", "09:25"], 
+        times: ["02:00", "12:00"], 
         duration: 3, 
         reminders: true 
     },
@@ -36,6 +36,10 @@ const EVENTS = [
         reminders: false 
     }
 ];
+
+// Mapas para gestionar eventos activos y recordatorios
+const activeEvents = new Map();  // Guarda mensajes de eventos activos
+const activeReminders = new Map();  // Guarda los intervalos de recordatorios
 
 async function sendEvent(event) {
     const channel = await client.channels.fetch(EVENT_CHANNEL_ID);
@@ -52,22 +56,21 @@ async function sendEvent(event) {
     const message = await channel.send({ embeds: [embed] });
     await message.react("✅");
 
+    // Guardar la referencia del mensaje de evento y de la mención
+    activeEvents.set(message.id, { mentionMessage, event });
+
     if (event.reminders) {
         scheduleReminders(event, message);
     }
-
-    // Guardar la referencia del mensaje de atención junto con el embed
-    activeEvents.set(message.id, mentionMessage);
 }
-
-// Mapa para almacenar los mensajes de aviso relacionados con los eventos
-const activeEvents = new Map();
 
 function scheduleReminders(event, originalMessage) {
     let elapsed = 1;
+    
     const reminderInterval = setInterval(async () => {
         if (elapsed >= event.duration) {
             clearInterval(reminderInterval);
+            activeReminders.delete(event.name);
             return;
         }
 
@@ -83,11 +86,16 @@ function scheduleReminders(event, originalMessage) {
         const newMessage = await channel.send({ embeds: [embed] });
         await newMessage.react("✅");
 
+        // Guardar el nuevo recordatorio en el mapa
+        activeEvents.set(newMessage.id, { mentionMessage: originalMessage, event });
+
         await originalMessage.delete().catch(() => {});
         originalMessage = newMessage;
 
         elapsed++;
     }, 60 * 60 * 1000);
+
+    activeReminders.set(event.name, reminderInterval);
 }
 
 function checkEvents() {
@@ -124,19 +132,41 @@ client.once('ready', async () => {
     setInterval(checkEvents, 60 * 1000);
 });
 
-// Ahora también eliminamos el mensaje de aviso cuando se reacciona con ✅
+// Manejo de reacciones para detener recordatorios y eliminar mensajes del evento
 client.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
-    if (reaction.emoji.name === "✅") {
-        const mentionMessage = activeEvents.get(reaction.message.id);
-        if (mentionMessage) {
-            await mentionMessage.delete().catch(() => {});
-            activeEvents.delete(reaction.message.id);
-        }
-        await reaction.message.delete().catch(() => {});
+    if (reaction.emoji.name !== "✅") return;
+
+    const eventData = activeEvents.get(reaction.message.id);
+    if (!eventData) return;
+
+    const { mentionMessage, event } = eventData;
+
+    // Eliminar el mensaje de mención si existe
+    if (mentionMessage) {
+        await mentionMessage.delete().catch(() => {});
     }
+
+    // Eliminar todos los mensajes asociados al evento
+    for (const [msgId, data] of activeEvents) {
+        if (data.event.name === event.name) {
+            const msg = await reaction.message.channel.messages.fetch(msgId).catch(() => null);
+            if (msg) await msg.delete().catch(() => {});
+            activeEvents.delete(msgId);
+        }
+    }
+
+    // Detener los recordatorios si existen
+    if (activeReminders.has(event.name)) {
+        clearInterval(activeReminders.get(event.name));
+        activeReminders.delete(event.name);
+    }
+
+    // Eliminar el mensaje reaccionado
+    await reaction.message.delete().catch(() => {});
 });
 
+// Comando de prueba para enviar eventos manualmente
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
