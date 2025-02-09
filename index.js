@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 const cron = require('node-cron');
 const moment = require('moment-timezone');
 require('dotenv').config();
@@ -11,81 +11,57 @@ app.listen(port, () => console.log("Bot encendido"));
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMessageReactions] });
 
 const mySecret = process.env.TOKEN;
-const channelId = '1334412534127788043';
-const roleId = '1334408903034667029';
+const channelId = '1334412534127788043'; // Reemplázalo con el ID del canal donde quieres que se envíen los eventos
+const roleId = '1334408903034667029'; // Reemplázalo con el ID del rol a mencionar en los recordatorios
 
 const eventos = [
-    { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '13:00', '15:00', '17:00'], recordatorio: true },
-    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '23:37'], recordatorio: false },
-    { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['02:10', '10:00'], recordatorio: true },
+    { nombre: 'ROBO A VEHÍCULO', dias: [2, 3], horarios: ['22:00', '13:00', '15:00', '17:00'], duracion: 2, recordatorio: true },
+    { nombre: 'MISIÓN DE TRÁFICO ILEGAL', dias: [1, 4, 6], horarios: ['06:00', '15:00', '23:43'], duracion: 3, recordatorio: false },
+    { nombre: 'ROBO A NEGOCIO', dias: [1, 3, 5, 0], horarios: ['02:10', '10:00'], duracion: 11, recordatorio: true },
+    { nombre: 'LANCHA ENCALLADA', dias: [1, 2, 5, 0], horarios: ['00:00', '14:00', '16:00', '18:00'], duracion: 2, recordatorio: true },
+    { nombre: 'METAFETAMINA DIA 1', dias: [1], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'METAFETAMINA DIA 2', dias: [3], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'METAFETAMINA DIA 3', dias: [5], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'DIA RECOMPENSA', dias: [0], horarios: ['05:00'], duracion: 16, recordatorio: false },
+    { nombre: 'REPARTO AEREO', dias: [2, 5], horarios: ['07:00', '15:00', '20:00'], duracion: 3, recordatorio: true },
+    { nombre: 'BUSQUEDA DE CONTENEDORES', dias: [4, 5], horarios: ['00:00', '15:00', '17:00', '19:00'], duracion: 2, recordatorio: true },
 ];
 
 const eventosActivos = new Map();
 
 client.once('ready', async () => {
-    console.log('✅ Bot listo.');
-    const canal = await client.channels.fetch(channelId);
+    try {
+        console.log('✅ Bot listo.');
 
-    eventos.forEach(evento => {
-        if (evento.recordatorio) {
-            evento.horarios.forEach(horario => {
-                const [hora, minuto] = horario.split(':');
+        const canal = await client.channels.fetch(channelId).catch(err => console.error("❌ No se pudo obtener el canal:", err));
+        if (!canal) return console.log("⚠️ Canal no encontrado.");
 
-                cron.schedule(`${minuto} ${hora} * * ${evento.dias.join(',')}`, async () => {
-                    const mensaje = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
-                    eventosActivos.set(mensaje.id, { evento, mensaje });
+        eventos.forEach(evento => {
+            if (evento.recordatorio) {
+                evento.horarios.forEach(horario => {
+                    const [hora, minuto] = horario.split(':');
+                    console.log(`📅 Programando evento: ${evento.nombre} a las ${hora}:${minuto} en días ${evento.dias.join(',')}`);
+
+                    cron.schedule(`${minuto} ${hora} * * ${evento.dias.join(',')}`, async () => {
+                        console.log(`🔔 Enviando recordatorio: ${evento.nombre}`);
+                        
+                        const embed = new EmbedBuilder()
+                            .setTitle(`⏰ Recordatorio de Evento`)
+                            .setDescription(`**${evento.nombre}** ha comenzado. ¡No lo olvides!`)
+                            .setColor(0xff0000)
+                            .setTimestamp();
+
+                        const mensaje = await canal.send({ content: `<@&${roleId}>`, embeds: [embed] });
+                        await mensaje.react('✅');
+
+                        eventosActivos.set(mensaje.id, { evento, mensaje });
+                    });
                 });
-            });
-        }
-    });
-});
-
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) return;
-
-    if (interaction.commandName === 'testearevento') {
-        const eventoNombre = interaction.options.getString('evento');
-        const evento = eventos.find(e => e.nombre.toLowerCase() === eventoNombre.toLowerCase());
-
-        if (!evento) {
-            await interaction.reply({ content: '❌ Evento no encontrado.', ephemeral: true });
-            return;
-        }
-
-        const canal = await client.channels.fetch(channelId);
-        if (!canal) return;
-
-        await canal.send(`📣 El evento **${evento.nombre}** ha comenzado <@&${roleId}>`);
-
-        const embed = new EmbedBuilder()
-            .setTitle(`🚨 ${evento.nombre} 🚨`)
-            .setDescription(`*🟢 ACTIVIDAD ACTIVA*
-            
-📢 ¡Participa en el evento antes de que termine!`)
-            .setColor(0xff0000)
-            .setFooter({ text: "🔻 Atentamente Al Qaeda 🔻" });
-
-        const mensaje = await canal.send({ embeds: [embed] });
-        await mensaje.react('✅');
-        eventosActivos.set(mensaje.id, { evento, mensaje });
+            }
+        });
+    } catch (error) {
+        console.error('❌ Error al iniciar los eventos:', error);
     }
-});
-
-client.on('messageReactionAdd', async (reaction, user) => {
-    if (user.bot) return;
-    if (reaction.emoji.name === '✅' && eventosActivos.has(reaction.message.id)) {
-        const { mensaje } = eventosActivos.get(reaction.message.id);
-        await mensaje.delete().catch(() => {});
-        eventosActivos.delete(reaction.message.id);
-    }
-});
-
-function convertirHorarioArgentina(horario) {
-    return moment.tz(horario, 'HH:mm', 'America/Argentina/Buenos_Aires').format('HH:mm');
-}
-
-eventos.forEach(evento => {
-    evento.horarios = evento.horarios.map(horario => convertirHorarioArgentina(horario));
 });
 
 client.login(mySecret);
