@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder, Partials, SlashCommandBuilder } = require('discord.js');
 const moment = require('moment-timezone');
 
 const express = require("express");
@@ -8,7 +8,13 @@ const port = 3000;
 app.listen(port, () => console.log("Bot encendido"));
 
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions
+    ],
+    partials: [Partials.Message, Partials.Reaction, Partials.User]
 });
 
 const EVENT_ROLE_ID = "1334408903034667029";  // Reemplaza con el ID del rol
@@ -37,14 +43,16 @@ async function sendEvent(event) {
     const channel = await client.channels.fetch(EVENT_CHANNEL_ID);
     if (!channel) return console.error("Canal no encontrado");
 
-    const mention = `<@&${EVENT_ROLE_ID}>`;
+    const mention = `<@&${EVENT_ROLE_ID}> 🔔 **¡Atención! Se ha programado un nuevo evento.**`;
+    await channel.send(mention);
+
     const embed = new EmbedBuilder()
         .setTitle(event.name)
-        .setDescription(`Este evento comenzará ahora y durará ${event.duration} horas.`)
+        .setDescription(`Este evento ha comenzado y durará **${event.duration} horas**.`)
         .setColor('#ffcc00')
         .setTimestamp();
 
-    const message = await channel.send({ content: mention, embeds: [embed] });
+    const message = await channel.send({ embeds: [embed] });
     await message.react("✅");
 
     if (event.reminders) {
@@ -65,8 +73,8 @@ function scheduleReminders(event, originalMessage) {
         if (!channel) return;
 
         const embed = new EmbedBuilder()
-            .setTitle(`Recordatorio: ${event.name}`)
-            .setDescription(`Han pasado ${elapsed} hora(s) desde el inicio del evento.`)
+            .setTitle(`⏰ Recordatorio: ${event.name}`)
+            .setDescription(`Han pasado **${elapsed} hora(s)** desde el inicio del evento.`)
             .setColor('#ff9900')
             .setTimestamp();
 
@@ -74,7 +82,7 @@ function scheduleReminders(event, originalMessage) {
         await newMessage.react("✅");
 
         // Eliminar el mensaje anterior de recordatorio
-        await originalMessage.delete();
+        await originalMessage.delete().catch(() => {});
         originalMessage = newMessage;
 
         elapsed++;
@@ -96,7 +104,7 @@ function checkEvents() {
 
 // Evento de inicio del bot
 client.once('ready', () => {
-    console.log(`Bot conectado como ${client.user.tag}`);
+    console.log(`✅ Bot conectado como ${client.user.tag}`);
     checkEvents();
     setInterval(checkEvents, 60 * 1000); // Verifica cada minuto
 });
@@ -105,7 +113,29 @@ client.once('ready', () => {
 client.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
     if (reaction.emoji.name === "✅") {
-        await reaction.message.delete();
+        await reaction.message.delete().catch(() => {});
+    }
+});
+
+// Comando para testear eventos
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName === "testevent") {
+        const event = EVENTS[0]; // Usa el primer evento como prueba
+        await sendEvent(event);
+        await interaction.reply({ content: "✅ Evento de prueba enviado.", ephemeral: true });
+    }
+});
+
+// Registro de comandos
+client.on('ready', async () => {
+    const guild = client.guilds.cache.first();
+    if (guild) {
+        await guild.commands.create(new SlashCommandBuilder()
+            .setName("testevent")
+            .setDescription("Envía un evento de prueba para testeo."));
+        console.log("✅ Comando /testevent registrado");
     }
 });
 
