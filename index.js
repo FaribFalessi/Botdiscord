@@ -205,9 +205,11 @@ eventos.forEach(evento => {
             const minuto = horarioArgentina.minute();
 
             cron.schedule(`${minuto} ${hora} * * ${evento.dias.join(',')}`, async () => {
-                const mensaje = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
-                eventosActivos.set(mensaje.id, { evento, mensaje });
+            console.log(`📅 Enviando recordatorio para ${evento.nombre} a las ${hora}:${minuto}`);
+            const mensaje = await canal.send(`⏰ Recordatorio: **${evento.nombre}** ha comenzado. ¡No lo olvides!`);
+            eventosActivos.set(mensaje.id, { evento, mensaje });
             });
+
         });
     }
 });
